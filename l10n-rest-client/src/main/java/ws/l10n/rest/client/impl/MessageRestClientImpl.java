@@ -3,11 +3,9 @@ package ws.l10n.rest.client.impl;
 import ws.l10n.rest.client.MessageBundle;
 import ws.l10n.rest.client.MessageRestClient;
 import ws.l10n.rest.client.Response;
-import ws.l10n.rest.client.impl.json.Json;
-import ws.l10n.rest.client.impl.json.JsonArray;
-import ws.l10n.rest.client.impl.json.JsonObject;
-import ws.l10n.rest.client.impl.json.JsonValue;
+import ws.l10n.rest.client.impl.json.*;
 
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
@@ -35,8 +33,8 @@ public class MessageRestClientImpl implements MessageRestClient {
     public static final String KEY = "key";
     public static final String VALUE = "value";
     public static final String LOCALE = "locale";
-    public static final String STATUS = "status";
-    public static final String STATUS_OK = "OK";
+    public static final String ERROR_CODE = "errorCode";
+    public static final String REASON = "reason";
 
 
     private final String serviceUrl;
@@ -62,31 +60,46 @@ public class MessageRestClientImpl implements MessageRestClient {
         }
 
         try {
-            URL url = new URL(serviceUrl + toQuery(bundleUid, version));
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+
+            HttpURLConnection conn = openConnection(bundleUid, version);
+
             conn.setRequestMethod("GET");
             conn.setRequestProperty("Accept", "application/json");
             conn.setRequestProperty(ACCESS_TOKEN_HEADER, accessToken);
 
             if (conn.getResponseCode() != 200) {
-                throw new MessageClientException("Failed: HTTP error code : " + conn.getResponseCode());
+                String reason = tryGetReason(conn);
+                throw new MessageClientException("Failed: HTTP error code : " + conn.getResponseCode()
+                        + ", reason '" + reason + "'");
             }
 
             JsonValue jsonValue = Json.parse(new InputStreamReader(conn.getInputStream()));
             conn.disconnect();
             JsonObject jsonObject = jsonValue.asObject();
-            JsonValue status = jsonObject.get(STATUS);
 
-            if (STATUS_OK.equals(status.asString())) {
-                Locale defaultLocale = parseLocale(jsonObject.getString(DEFAULT_LOCALE, "en_US"));
-                Map<Locale, MessageBundle> map = parseContent(jsonObject);
-                return new ResponseImpl(defaultLocale, map);
-            } else {
-                throw new MessageClientException("Bad status code from service " + status);
-            }
-        } catch (Exception e) {
+            Locale defaultLocale = parseLocale(jsonObject.getString(DEFAULT_LOCALE, "en_US"));
+            Map<Locale, MessageBundle> map = parseContent(jsonObject);
+            return new ResponseImpl(defaultLocale, map);
+
+        } catch (IOException | ParseException e) {
             throw new MessageClientException(e);
         }
+    }
+
+    private String tryGetReason(HttpURLConnection conn) {
+        try {
+            JsonValue jsonValue = Json.parse(new InputStreamReader(conn.getInputStream()));
+
+            return jsonValue.asObject().getString(REASON, "");
+        } catch (IOException e) {
+            //skip
+        }
+        return "";
+    }
+
+    private HttpURLConnection openConnection(String bundleUid, String version) throws IOException {
+        URL url = new URL(serviceUrl + toQuery(bundleUid, version));
+        return (HttpURLConnection) url.openConnection();
     }
 
     private Locale parseLocale(String display) {

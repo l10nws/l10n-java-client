@@ -1,0 +1,14 @@
+{
+  "defaultLocale": "en_US",
+  "content": [
+    {
+      "locale": "en_US",
+      "messages": [
+        {
+          "key": "server.port",
+          "value": "9000"
+        }
+      ]
+    }
+  ]
+}
