@@ -1,2 +1,2 @@
-include 'l10n-java', 'l10n-java-rest-client'
+include 'l10n-core', 'l10n-rest-client', 'l10n-spring'
 

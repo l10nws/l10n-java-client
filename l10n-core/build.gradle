@@ -1,0 +1,15 @@
+version '0.0.1'
+
+apply plugin: 'java'
+
+sourceCompatibility = 1.5
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile project(":l10n-rest-client")
+    
+    testCompile 'junit:junit:4.12'
+}
