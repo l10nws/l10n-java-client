@@ -17,11 +17,17 @@ public class MessageBundleImpl implements MessageBundle {
         this.locale = locale;
     }
 
+    @Override
+    public Map<String, String> getMessages() {
+        return messages;
+    }
 
+    @Override
     public String getMessage(String code) {
         return messages.get(code);
     }
 
+    @Override
     public Locale getLocale() {
         return locale;
     }

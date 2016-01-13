@@ -51,8 +51,8 @@ public class MessageRestClientImpl implements MessageRestClient {
         this.accessToken = accessToken;
     }
 
-    public Response load(String bundleUid, String version) {
-        if (bundleUid == null || bundleUid.equals("")) {
+    public Response load(String bundleKey, String version) {
+        if (bundleKey == null || bundleKey.equals("")) {
             throw new MessageClientException("BundleUid should be not empty");
         }
         if (version == null || version.equals("")) {
@@ -61,7 +61,7 @@ public class MessageRestClientImpl implements MessageRestClient {
 
         try {
 
-            HttpURLConnection conn = openConnection(bundleUid, version);
+            HttpURLConnection conn = openConnection(bundleKey, version);
 
             conn.setRequestMethod("GET");
             conn.setRequestProperty("Accept", "application/json");

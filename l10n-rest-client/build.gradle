@@ -1,4 +1,5 @@
 apply plugin: 'java'
+apply plugin: 'maven'
 
 repositories {
     mavenCentral()
@@ -13,4 +14,16 @@ dependencies {
     testCompile 'org.powermock:powermock-api-easymock:1.6.4'
     testCompile 'org.easymock:easymock:3.4'
 
+}
+
+compileJava.options.compilerArgs.add '-parameters'
+compileTestJava.options.compilerArgs.add '-parameters'
+
+uploadArchives {
+    repositories.mavenInstaller {
+        pom.groupId = 'ws.l10n'
+        pom.artifactId = 'l10n-rest-client'
+        pom.version = '1.0'
+        pom.packaging = 'jar'
+    }
 }

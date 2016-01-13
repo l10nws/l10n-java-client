@@ -5,6 +5,6 @@ package ws.l10n.rest.client;
  */
 public interface MessageRestClient {
 
-    Response load(String bundleUid, String version);
+    Response load(String bundleKey, String version);
 
 }
