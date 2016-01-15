@@ -9,7 +9,7 @@ public class L10nExtension {
     private String bundleKey;
     private String version;
     private String baseName = "messages";
-    private String relativePath = "./src/main/resources";
+    private String path = "./src/main/resources";
 
     public String getServiceUrl() {
         return serviceUrl;
@@ -51,11 +51,11 @@ public class L10nExtension {
         this.baseName = baseName;
     }
 
-    public String getRelativePath() {
-        return relativePath;
+    public String getPath() {
+        return path;
     }
 
-    public void setRelativePath(String relativePath) {
-        this.relativePath = relativePath;
+    public void setPath(String path) {
+        this.path = path;
     }
 }

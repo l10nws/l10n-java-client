@@ -18,5 +18,9 @@ apply plugin: 'l10n-gradle-plugin'
 sourceCompatibility = 1.5
 
 l10nOptions {
-    serviceUrl = "adfasdfasf"
+    serviceUrl = "http://localhost:9000/api/v1"
+    accessToken = "C85hg"
+    bundleKey = "C85hg"
+    version = "1"
+    path = "./src/main/resources"
 }

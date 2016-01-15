@@ -3,7 +3,7 @@ package ws.l10n.core;
 import org.junit.Test;
 import ws.l10n.core.impl.Options;
 import ws.l10n.core.impl.ReloadableMessageContextImpl;
-import ws.l10n.rest.client.MessageBundle;
+import ws.l10n.rest.client.MessagePack;
 
 /**
  * @author Serhii Bohutskyi
@@ -19,7 +19,7 @@ public class ReloadableMessageContextTest {
                 .setVersion("1 ")
                 .setReloadPeriod(1000);
         ReloadableMessageContext messageContext = new ReloadableMessageContextImpl(options);
-        Iterable<MessageBundle> messageBundles = messageContext.getMessageBundles();
+        Iterable<MessagePack> messageBundles = messageContext.getMessageBundles();
         Thread.sleep(100000000);
         System.out.println(messageBundles);
     }

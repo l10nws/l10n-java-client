@@ -1,6 +1,6 @@
 package ws.l10n.rest.client.impl;
 
-import ws.l10n.rest.client.MessageBundle;
+import ws.l10n.rest.client.MessagePack;
 import ws.l10n.rest.client.MessageRestClient;
 import ws.l10n.rest.client.Response;
 import ws.l10n.rest.client.impl.json.*;
@@ -15,6 +15,8 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+import static ws.l10n.rest.client.utils.LocaleUtils.toLocale;
+
 /**
  * @author Serhii Bohutskyi
  */
@@ -24,7 +26,8 @@ public class MessageRestClientImpl implements MessageRestClient {
     private static final String ACCESS_TOKEN_HEADER = "access-token";
     private static final String BUNDLE_UID_PARAM = "b";
     private static final String VERSION_PARAM = "v";
-    private static final String LOCALES_PARAM = "l";
+    private static final String LOCALES_PARAM = "l[]";
+    private static final String MESSAGES_PATH = "/m";
 
     //------------------- JSON NAMES -------------------//
     public static final String CONTENT = "content";
@@ -47,21 +50,21 @@ public class MessageRestClientImpl implements MessageRestClient {
         if (accessToken == null || accessToken.equals("")) {
             throw new MessageClientException("AccessToken  should be not empty");
         }
+        if (serviceUrl.endsWith("/")) {
+            //remove last '/'
+            serviceUrl = serviceUrl.substring(0, serviceUrl.length() - 1);
+        }
         this.serviceUrl = serviceUrl;
         this.accessToken = accessToken;
     }
 
-    public Response load(String bundleKey, String version) {
-        if (bundleKey == null || bundleKey.equals("")) {
-            throw new MessageClientException("BundleUid should be not empty");
-        }
-        if (version == null || version.equals("")) {
-            throw new MessageClientException("Version  should be not empty");
-        }
+    public Response load(String bundleKey, String version, String[] locales) {
+
+        validate(bundleKey, version);
 
         try {
 
-            HttpURLConnection conn = openConnection(bundleKey, version);
+            HttpURLConnection conn = openConnection(bundleKey, version, locales);
 
             conn.setRequestMethod("GET");
             conn.setRequestProperty("Accept", "application/json");
@@ -77,13 +80,28 @@ public class MessageRestClientImpl implements MessageRestClient {
             conn.disconnect();
             JsonObject jsonObject = jsonValue.asObject();
 
-            Locale defaultLocale = parseLocale(jsonObject.getString(DEFAULT_LOCALE, "en_US"));
-            Map<Locale, MessageBundle> map = parseContent(jsonObject);
+            Locale defaultLocale = toLocale(jsonObject.getString(DEFAULT_LOCALE, "en_US"));
+            Map<Locale, MessagePack> map = parseContent(jsonObject);
             return new ResponseImpl(defaultLocale, map);
 
-        } catch (IOException | ParseException e) {
+        } catch (IOException e) {
             throw new MessageClientException(e);
+        } catch (ParseException ex) {
+            throw new MessageClientException(ex);
         }
+    }
+
+    private void validate(String bundleKey, String version) {
+        if (bundleKey == null || bundleKey.equals("")) {
+            throw new MessageClientException("BundleUid should be not empty");
+        }
+        if (version == null || version.equals("")) {
+            throw new MessageClientException("Version  should be not empty");
+        }
+    }
+
+    public Response load(String bundleKey, String version) {
+        return load(bundleKey, version, null);
     }
 
     private String tryGetReason(HttpURLConnection conn) {
@@ -97,18 +115,13 @@ public class MessageRestClientImpl implements MessageRestClient {
         return "";
     }
 
-    private HttpURLConnection openConnection(String bundleUid, String version) throws IOException {
-        URL url = new URL(serviceUrl + toQuery(bundleUid, version));
+    private HttpURLConnection openConnection(String bundleUid, String version, String[] locales) throws IOException {
+        URL url = new URL(serviceUrl + MESSAGES_PATH + toQuery(bundleUid, version, locales));
         return (HttpURLConnection) url.openConnection();
     }
 
-    private Locale parseLocale(String display) {
-        String[] lc = display.split("_");
-        return new Locale(lc[0], lc[1]);
-    }
-
-    private Map<Locale, MessageBundle> parseContent(JsonObject jsonObject) {
-        Map<Locale, MessageBundle> result = new HashMap<Locale, MessageBundle>();
+    private Map<Locale, MessagePack> parseContent(JsonObject jsonObject) {
+        Map<Locale, MessagePack> result = new HashMap<Locale, MessagePack>();
 
         JsonArray locales = jsonObject.get(CONTENT).asArray();
         for (JsonValue localeMessages : locales) {
@@ -119,9 +132,9 @@ public class MessageRestClientImpl implements MessageRestClient {
                 String value = message.asObject().getString(VALUE, "");
                 messagesMap.put(key, value);
             }
-            Locale locale = parseLocale(localeMessages.asObject().get(LOCALE).asString());
+            Locale locale = toLocale(localeMessages.asObject().get(LOCALE).asString());
 
-            result.put(locale, new MessageBundleImpl(messagesMap, locale));
+            result.put(locale, new MessagePackImpl(messagesMap, locale));
         }
         return result;
     }
@@ -134,7 +147,8 @@ public class MessageRestClientImpl implements MessageRestClient {
         }
     }
 
-    private String toQuery(String bundleUid, String version) {
+    private String toQuery(String bundleUid, String version, String[] locales) {
+
         StringBuilder builder = new StringBuilder("?")
                 .append(BUNDLE_UID_PARAM)
                 .append("=")
@@ -143,6 +157,16 @@ public class MessageRestClientImpl implements MessageRestClient {
                 .append(VERSION_PARAM)
                 .append("=")
                 .append(encode(version));
+
+        if (locales != null) {
+            for (String locale : locales) {
+                builder.append("&")
+                        .append(LOCALES_PARAM)
+                        .append("=")
+                        .append(locale);
+            }
+        }
+
         return builder.toString();
     }
 }

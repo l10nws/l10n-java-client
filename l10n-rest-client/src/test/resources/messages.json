@@ -5,8 +5,25 @@
       "locale": "en_US",
       "messages": [
         {
-          "key": "server.port",
-          "value": "9000"
+          "key": "foo",
+          "value": "bar"
+        },
+        {
+          "key": "biz",
+          "value": "baz"
+        }
+      ]
+    },
+    {
+      "locale": "en_UK",
+      "messages": [
+        {
+          "key": "Xyzzy",
+          "value": "Zzyzx"
+        },
+        {
+          "key": "sna",
+          "value": "fu"
         }
       ]
     }

@@ -24,7 +24,6 @@ public class L10nBundleMessageSource extends AbstractMessageSource implements In
     private boolean useCodeAsDefaultMessage;
 
 
-    @Override
     public void afterPropertiesSet() throws Exception {
         messageContext = new ReloadableMessageContextImpl(generateOptions());
     }
@@ -39,7 +38,6 @@ public class L10nBundleMessageSource extends AbstractMessageSource implements In
                 .setUseCodeAsDefaultMessage(useCodeAsDefaultMessage);
     }
 
-    @Override
     protected MessageFormat resolveCode(String code, Locale locale) {
 
         String message = messageContext.getMessage(code, locale);
@@ -52,12 +50,10 @@ public class L10nBundleMessageSource extends AbstractMessageSource implements In
         return messageFormat;
     }
 
-    @Override
     public boolean isUseCodeAsDefaultMessage() {
         return useCodeAsDefaultMessage;
     }
 
-    @Override
     public void setUseCodeAsDefaultMessage(boolean useCodeAsDefaultMessage) {
         this.useCodeAsDefaultMessage = useCodeAsDefaultMessage;
     }

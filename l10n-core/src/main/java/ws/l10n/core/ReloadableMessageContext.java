@@ -1,6 +1,6 @@
 package ws.l10n.core;
 
-import ws.l10n.rest.client.MessageBundle;
+import ws.l10n.rest.client.MessagePack;
 
 import java.util.Locale;
 
@@ -15,10 +15,10 @@ public interface ReloadableMessageContext {
 
     String getMessage(String code, Locale locale);
 
-    MessageBundle getMessageBundle(Locale locale);
+    MessagePack getMessageBundle(Locale locale);
 
     Iterable<Locale> getSupportedLocales();
 
-    Iterable<MessageBundle> getMessageBundles();
+    Iterable<MessagePack> getMessageBundles();
 
 }

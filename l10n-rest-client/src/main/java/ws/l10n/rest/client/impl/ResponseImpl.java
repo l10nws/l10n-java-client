@@ -1,6 +1,6 @@
 package ws.l10n.rest.client.impl;
 
-import ws.l10n.rest.client.MessageBundle;
+import ws.l10n.rest.client.MessagePack;
 import ws.l10n.rest.client.Response;
 
 import java.util.Locale;
@@ -12,9 +12,9 @@ import java.util.Map;
 public class ResponseImpl implements Response {
 
     private Locale defLocale;
-    private Map<Locale, MessageBundle> bundleMap;
+    private Map<Locale, MessagePack> bundleMap;
 
-    public ResponseImpl(Locale defLocale, Map<Locale, MessageBundle> bundleMap) {
+    public ResponseImpl(Locale defLocale, Map<Locale, MessagePack> bundleMap) {
         this.defLocale = defLocale;
         this.bundleMap = bundleMap;
     }
@@ -23,7 +23,7 @@ public class ResponseImpl implements Response {
         return defLocale;
     }
 
-    public Map<Locale, MessageBundle> getBundles() {
+    public Map<Locale, MessagePack> getMessagePacks() {
         return bundleMap;
     }
 }

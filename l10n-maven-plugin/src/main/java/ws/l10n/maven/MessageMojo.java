@@ -5,7 +5,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
-import ws.l10n.rest.client.MessageBundle;
+import ws.l10n.rest.client.MessagePack;
 import ws.l10n.rest.client.MessageRestClient;
 import ws.l10n.rest.client.Response;
 import ws.l10n.rest.client.impl.MessageRestClientImpl;
@@ -33,8 +33,8 @@ public class MessageMojo extends AbstractMojo {
 
     @Parameter(property = "load.baseName", defaultValue = "messages")
     private String baseName;
-    @Parameter(property = "load.relativePath", defaultValue = "./src/main/resources")
-    private String relativePath;
+    @Parameter(property = "load.path", defaultValue = "./src/main/resources")
+    private String path;
 
     public void execute() throws MojoExecutionException, MojoFailureException {
         getLog().info("[L10n] START LOADING");
@@ -42,23 +42,27 @@ public class MessageMojo extends AbstractMojo {
         MessageRestClient restClient = new MessageRestClientImpl(serviceUrl, accessToken);
         Response response = restClient.load(bundleKey, version);
         Locale defaultLocale = response.getDefaultLocale();
-        Map<Locale, MessageBundle> bundles = response.getBundles();
-        for (MessageBundle messageBundle : bundles.values()) {
-            writeToFile(messageBundle, messageBundle.getLocale().equals(defaultLocale));
+        Map<Locale, MessagePack> packs = response.getMessagePacks();
+        for (MessagePack messagePack : packs.values()) {
+            writeToFile(messagePack, messagePack.getLocale().equals(defaultLocale));
         }
 
         getLog().info("[L10n] END LOADING");
     }
 
-    private void writeToFile(MessageBundle messageBundle, boolean isDefault) {
-        String fileName = baseName + (isDefault ? "" : "_" + messageBundle.getLocale());
-        String filePath = (relativePath.endsWith("/") ? relativePath + fileName : relativePath + "/" + fileName) + ".properties";
+    private void writeToFile(MessagePack messagePack, boolean isDefault) {
+        String fileName = baseName + (isDefault ? "" : "_" + messagePack.getLocale());
+        String filePath = (path.endsWith("/") ? path + fileName : path + "/" + fileName) + ".properties";
         BufferedWriter out = null;
         try {
+
+            getLog().info("Write pack with locale " + messagePack.getLocale().getDisplayName() + " to file '" +
+                    filePath + "'");
+
             out = new BufferedWriter(new FileWriter(filePath));
             out.write(header);
 
-            for (Map.Entry<String, String> entry : messageBundle.getMessages().entrySet()) {
+            for (Map.Entry<String, String> entry : messagePack.getMessages().entrySet()) {
                 out.write(entry.getKey() + "=" + entry.getValue() + "\n");
             }
             out.close();
@@ -68,8 +72,7 @@ public class MessageMojo extends AbstractMojo {
         }
     }
 
-    private String header =
-            "########################################################################################################################\n" +
+    private String header = "########################################################################################################################\n" +
             "#                                                                                                                      #\n" +
             "#                                  This properties file created by L10n plugin                                         #\n" +
             "#                                                                                                                      #\n" +
