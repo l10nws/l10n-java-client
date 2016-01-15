@@ -1,2 +1,2 @@
-include 'l10n-core', 'l10n-rest-client', 'l10n-spring'
+include 'l10n-core', 'l10n-rest-client', 'l10n-spring', 'l10n-gradle-plugin'
 

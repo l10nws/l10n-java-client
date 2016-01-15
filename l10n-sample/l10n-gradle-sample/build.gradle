@@ -1,0 +1,22 @@
+group 'ws.l10n.sample'
+version '1.0'
+
+buildscript {
+    repositories {
+        mavenCentral()
+        mavenLocal()
+    }
+    dependencies {
+        classpath 'ws.l10n:l10n-gradle-plugin:1.0'
+    }
+
+}
+
+apply plugin: 'java'
+apply plugin: 'l10n-gradle-plugin'
+
+sourceCompatibility = 1.5
+
+l10nOptions {
+    serviceUrl = "adfasdfasf"
+}
