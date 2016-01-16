@@ -12,7 +12,7 @@ public class MessagePackImpl implements MessagePack {
     private final Map<String, String> messages;
     private final Locale locale;
 
-    MessagePackImpl(Map<String, String> messages, Locale locale) {
+    public MessagePackImpl(Map<String, String> messages, Locale locale) {
         this.messages = messages;
         this.locale = locale;
     }

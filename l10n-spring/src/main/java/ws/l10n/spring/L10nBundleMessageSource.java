@@ -10,6 +10,9 @@ import java.text.MessageFormat;
 import java.util.Locale;
 
 /**
+ * Implementation of the {@link org.springframework.context.MessageSource} interface,
+ * implementing loading messages from L10n service with reload period or once.
+ *
  * @author Serhii Bohutskyi
  */
 public class L10nBundleMessageSource extends AbstractMessageSource implements InitializingBean {
@@ -24,13 +27,18 @@ public class L10nBundleMessageSource extends AbstractMessageSource implements In
     private boolean useCodeAsDefaultMessage;
 
 
+    /**
+     * Initialize L10n message context.
+     *
+     * @throws Exception
+     */
     public void afterPropertiesSet() throws Exception {
         messageContext = new ReloadableMessageContextImpl(generateOptions());
     }
 
     private Options generateOptions() {
         return new Options()
-                .setBundleUid(bundleUid)
+                .setBundleKey(bundleUid)
                 .setAccessToken(accessToken)
                 .setReloadPeriod(reloadPeriod)
                 .setServiceUrl(serviceUrl)
@@ -38,6 +46,13 @@ public class L10nBundleMessageSource extends AbstractMessageSource implements In
                 .setUseCodeAsDefaultMessage(useCodeAsDefaultMessage);
     }
 
+    /**
+     * Getting message from l10n context and apply format.
+     *
+     * @param code   message key
+     * @param locale the locale
+     * @return message format
+     */
     protected MessageFormat resolveCode(String code, Locale locale) {
 
         String message = messageContext.getMessage(code, locale);

@@ -15,10 +15,10 @@ public interface ReloadableMessageContext {
 
     String getMessage(String code, Locale locale);
 
-    MessagePack getMessageBundle(Locale locale);
+    MessagePack getMessagePack(Locale locale);
 
     Iterable<Locale> getSupportedLocales();
 
-    Iterable<MessagePack> getMessageBundles();
+    Iterable<MessagePack> getMessagePacks();
 
 }

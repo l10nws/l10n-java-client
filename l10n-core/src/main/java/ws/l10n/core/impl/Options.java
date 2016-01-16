@@ -4,7 +4,7 @@ public class Options {
 
     private String serviceUrl;
     private String accessToken;
-    private String bundleUid;
+    private String bundleKey;
     private String version;
 
     private int reloadPeriod;
@@ -28,8 +28,8 @@ public class Options {
         return this;
     }
 
-    public Options setBundleUid(String bundleUid) {
-        this.bundleUid = bundleUid;
+    public Options setBundleKey(String bundleKey) {
+        this.bundleKey = bundleKey;
         return this;
     }
 
@@ -55,8 +55,8 @@ public class Options {
         return reloadPeriod;
     }
 
-    public String getBundleUid() {
-        return bundleUid;
+    public String getBundleKey() {
+        return bundleKey;
     }
 
     public String getVersion() {

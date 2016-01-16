@@ -1,26 +1,72 @@
 package ws.l10n.core;
 
+import org.junit.Assert;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
+import org.powermock.reflect.Whitebox;
 import ws.l10n.core.impl.Options;
 import ws.l10n.core.impl.ReloadableMessageContextImpl;
 import ws.l10n.rest.client.MessagePack;
+import ws.l10n.rest.client.MessageRestClient;
+import ws.l10n.rest.client.Response;
+import ws.l10n.rest.client.impl.MessagePackImpl;
+import ws.l10n.rest.client.impl.ResponseImpl;
+
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.UUID;
+
+import static org.easymock.EasyMock.*;
+import static org.powermock.api.easymock.PowerMock.createPartialMock;
 
 /**
  * @author Serhii Bohutskyi
  */
+@RunWith(PowerMockRunner.class)
+@PrepareForTest(ReloadableMessageContextImpl.class)
 public class ReloadableMessageContextTest {
 
     @Test
-    public void test() throws InterruptedException {
-        Options options = new Options()
-                .setServiceUrl("http://localhost:9000/api/m")
-                .setAccessToken("C85hg")
-                .setBundleUid("C85hg")
-                .setVersion("1 ")
-                .setReloadPeriod(1000);
-        ReloadableMessageContext messageContext = new ReloadableMessageContextImpl(options);
-        Iterable<MessagePack> messageBundles = messageContext.getMessageBundles();
-        Thread.sleep(100000000);
-        System.out.println(messageBundles);
+    public void contextTest() throws InterruptedException {
+
+        MessageRestClient restClient = createMock(MessageRestClient.class);
+
+        ReloadableMessageContextImpl context = createPartialMock(ReloadableMessageContextImpl.class,
+                new String[]{"initRestClient"}, createOptions());
+        Whitebox.setInternalState(context, "restClient", restClient);
+        expect(restClient.load("bundleKey", "1.0.0")).andReturn(createResponse()).anyTimes();
+        replay(restClient);
+
+        Assert.assertNotNull(context.getMessage("foo", Locale.CHINA));
+
+
+    }
+
+    private Response createResponse() {
+        Map<Locale, MessagePack> content = new HashMap<Locale, MessagePack>();
+        content.put(Locale.ENGLISH, new MessagePackImpl(createRandomMessages(), Locale.ENGLISH));
+        content.put(Locale.CANADA, new MessagePackImpl(createRandomMessages(), Locale.CANADA));
+        content.put(Locale.CHINA, new MessagePackImpl(createRandomMessages(), Locale.CHINA));
+        return new ResponseImpl(Locale.ENGLISH, content);
+    }
+
+    private Map<String, String> createRandomMessages() {
+        Map<String, String> messages = new HashMap<String, String>();
+        messages.put("foo", UUID.randomUUID().toString());
+        messages.put("biz", UUID.randomUUID().toString());
+        return messages;
+    }
+
+    private Options createOptions() {
+        return new Options()
+                .setServiceUrl("serviceUrl")
+                .setAccessToken("accessToken")
+                .setBundleKey("bundleKey")
+                .setVersion("1.0.0")
+                .setReloadPeriod(70 * 1000)
+                .setUseCodeAsDefaultMessage(false);
     }
 }

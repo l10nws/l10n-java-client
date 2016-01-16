@@ -8,6 +8,7 @@ import ws.l10n.rest.client.impl.MessageRestClientImpl;
 
 import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -17,28 +18,17 @@ import java.util.concurrent.locks.ReentrantLock;
 public class ReloadableMessageContextImpl implements ReloadableMessageContext {
 
     private final Options options;
-    private final MessageRestClient restClient;
+    private MessageRestClient restClient;
     private final AtomicReference<Map<Locale, MessagePack>> lookupMessageBundles =
             new AtomicReference<Map<Locale, MessagePack>>();
     private final AtomicReference<MessagePack> lookupDefaultMessageBundle = new AtomicReference<MessagePack>();
-    private final ReloadableThread reloadableThread;
+    private ReloadableThread reloadableThread;
     private final ReentrantLock lock = new ReentrantLock();
+    private final AtomicBoolean initialized = new AtomicBoolean();
 
     public ReloadableMessageContextImpl(Options options) {
-
         validate(options);
-
         this.options = options;
-        this.restClient = new MessageRestClientImpl(options.getServiceUrl(), options.getAccessToken());
-
-        if (options.getReloadPeriod() > 0) {
-            this.reloadableThread = new ReloadableThread();
-            this.reloadableThread.start();
-        } else {
-            this.reloadableThread = null;
-        }
-
-        reload();
     }
 
     private void validate(Options options) {
@@ -48,8 +38,8 @@ public class ReloadableMessageContextImpl implements ReloadableMessageContext {
         if (options.getAccessToken() == null || options.getAccessToken().equals("")) {
             throw new IllegalArgumentException("Access-Token cannot be empty");
         }
-        if (options.getBundleUid() == null || options.getBundleUid().equals("")) {
-            throw new IllegalArgumentException("BundleUid cannot be empty");
+        if (options.getBundleKey() == null || options.getBundleKey().equals("")) {
+            throw new IllegalArgumentException("BundleKey cannot be empty");
         }
         if (options.getVersion() == null || options.getVersion().equals("")) {
             throw new IllegalArgumentException("Version cannot be empty");
@@ -59,25 +49,28 @@ public class ReloadableMessageContextImpl implements ReloadableMessageContext {
         }
     }
 
-    private void waitIfNotLoaded() {
-        if (isNotLoaded()) {
-            synchronized (lock) {
-                if (isLoaded()) {
-                    return;
-                }
+    private void initRestClient() {
+        this.restClient = new MessageRestClientImpl(options.getServiceUrl(), options.getAccessToken());
+    }
 
-                try {
-                    lock.wait(30 * 1000);
-                } catch (InterruptedException e) {
-                }
-            }
+    private void init() {
+        initRestClient();
 
+        if (options.getReloadPeriod() > 0) {
+            this.reloadableThread = new ReloadableThread();
+            this.reloadableThread.start();
+        } else {
+            this.reloadableThread = null;
         }
+
+        initialized.set(true);
+
+        reload();
     }
 
     public void reload() {
         synchronized (lock) {
-            Response response = restClient.load(options.getBundleUid(), options.getVersion());
+            Response response = restClient.load(options.getBundleKey(), options.getVersion());
             lookupDefaultMessageBundle.set(response.getMessagePacks().get(response.getDefaultLocale()));
             lookupMessageBundles.set(response.getMessagePacks());
             lock.notifyAll();
@@ -91,8 +84,8 @@ public class ReloadableMessageContextImpl implements ReloadableMessageContext {
     public String getMessage(String code, String defaultMessage, Locale locale) {
         waitIfNotLoaded();
 
-        MessagePack messagePack = getMessageBundle(locale);
-        if (messagePack == null) {
+        MessagePack messagePack = getMessagePack(locale);
+        if (messagePack == null) {//no such pack for locale
             messagePack = lookupDefaultMessageBundle.get();
         }
         String message = messagePack != null ? messagePack.getMessage(code) : null;
@@ -110,13 +103,13 @@ public class ReloadableMessageContextImpl implements ReloadableMessageContext {
         return message;
     }
 
-    public MessagePack getMessageBundle(Locale locale) {
+    public MessagePack getMessagePack(Locale locale) {
         waitIfNotLoaded();
 
         return getLookup().get(locale);
     }
 
-    public Iterable<MessagePack> getMessageBundles() {
+    public Iterable<MessagePack> getMessagePacks() {
         waitIfNotLoaded();
 
         return lookupMessageBundles.get().values();
@@ -139,6 +132,25 @@ public class ReloadableMessageContextImpl implements ReloadableMessageContext {
 
     private Map<Locale, MessagePack> getLookup() {
         return lookupMessageBundles.get();
+    }
+
+    private void waitIfNotLoaded() {
+        if (!initialized.get()) {
+            init();
+        }
+        if (isNotLoaded()) {
+            synchronized (lock) {
+                if (isLoaded()) {
+                    return;
+                }
+
+                try {
+                    lock.wait(30 * 1000);
+                } catch (InterruptedException e) {
+                }
+            }
+
+        }
     }
 
     private class ReloadableThread extends Thread {
