@@ -22,7 +22,7 @@ import java.util.Map;
 @Mojo(name = "load")
 public class MessageMojo extends AbstractMojo {
 
-    @Parameter(property = "load.serviceUrl", defaultValue = "http://l10n.ws/api/v1/m")
+    @Parameter(property = "load.serviceUrl", defaultValue = "https://l10n.ws/api/v1")
     private String serviceUrl;
     @Parameter(property = "load.accessToken", required = true)
     private String accessToken;

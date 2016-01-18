@@ -1,13 +1,10 @@
-package ws.l10n.core;
+package ws.l10n.core.impl;
 
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.reflect.Whitebox;
-import ws.l10n.core.impl.Options;
-import ws.l10n.core.impl.ReloadableMessageContextImpl;
 import ws.l10n.rest.client.MessagePack;
 import ws.l10n.rest.client.MessageRestClient;
 import ws.l10n.rest.client.Response;
@@ -20,7 +17,6 @@ import java.util.Map;
 import java.util.UUID;
 
 import static org.easymock.EasyMock.*;
-import static org.powermock.api.easymock.PowerMock.createPartialMock;
 
 /**
  * @author Serhii Bohutskyi
@@ -34,14 +30,12 @@ public class ReloadableMessageContextTest {
 
         MessageRestClient restClient = createMock(MessageRestClient.class);
 
-        ReloadableMessageContextImpl context = createPartialMock(ReloadableMessageContextImpl.class,
-                new String[]{"initRestClient"}, createOptions());
-        Whitebox.setInternalState(context, "restClient", restClient);
+        ReloadableMessageContextImpl context = new ReloadableMessageContextImpl(restClient, createOptions());
         expect(restClient.load("bundleKey", "1.0.0")).andReturn(createResponse()).anyTimes();
         replay(restClient);
+        context.init();
 
         Assert.assertNotNull(context.getMessage("foo", Locale.CHINA));
-
 
     }
 

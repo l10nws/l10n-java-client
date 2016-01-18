@@ -4,7 +4,6 @@ import ws.l10n.core.ReloadableMessageContext;
 import ws.l10n.rest.client.MessagePack;
 import ws.l10n.rest.client.MessageRestClient;
 import ws.l10n.rest.client.Response;
-import ws.l10n.rest.client.impl.MessageRestClientImpl;
 
 import java.util.Locale;
 import java.util.Map;
@@ -15,7 +14,7 @@ import java.util.concurrent.locks.ReentrantLock;
 /**
  * @author Serhii Bohutskyi
  */
-public class ReloadableMessageContextImpl implements ReloadableMessageContext {
+class ReloadableMessageContextImpl implements ReloadableMessageContext {
 
     private final Options options;
     private MessageRestClient restClient;
@@ -26,12 +25,16 @@ public class ReloadableMessageContextImpl implements ReloadableMessageContext {
     private final ReentrantLock lock = new ReentrantLock();
     private final AtomicBoolean initialized = new AtomicBoolean();
 
-    public ReloadableMessageContextImpl(Options options) {
-        validate(options);
+    public ReloadableMessageContextImpl(MessageRestClient restClient, Options options) {
+        validate(restClient, options);
+        this.restClient = restClient;
         this.options = options;
     }
 
-    private void validate(Options options) {
+    private void validate(MessageRestClient restClient, Options options) {
+        if (restClient == null) {
+            throw new IllegalArgumentException("MessageRestClient cannot be empty");
+        }
         if (options.getServiceUrl() == null || options.getServiceUrl().equals("")) {
             throw new IllegalArgumentException("ServiceURL cannot be empty");
         }
@@ -49,12 +52,7 @@ public class ReloadableMessageContextImpl implements ReloadableMessageContext {
         }
     }
 
-    private void initRestClient() {
-        this.restClient = new MessageRestClientImpl(options.getServiceUrl(), options.getAccessToken());
-    }
-
-    private void init() {
-        initRestClient();
+    protected void init() {
 
         if (options.getReloadPeriod() > 0) {
             this.reloadableThread = new ReloadableThread();
@@ -135,9 +133,6 @@ public class ReloadableMessageContextImpl implements ReloadableMessageContext {
     }
 
     private void waitIfNotLoaded() {
-        if (!initialized.get()) {
-            init();
-        }
         if (isNotLoaded()) {
             synchronized (lock) {
                 if (isLoaded()) {
@@ -154,9 +149,6 @@ public class ReloadableMessageContextImpl implements ReloadableMessageContext {
     }
 
     private class ReloadableThread extends Thread {
-        public ReloadableThread() {
-            setDaemon(true);
-        }
 
         @Override
         public void run() {

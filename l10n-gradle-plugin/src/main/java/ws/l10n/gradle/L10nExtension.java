@@ -4,7 +4,7 @@ package ws.l10n.gradle;
  * @author Serhii Bohutskyi
  */
 public class L10nExtension {
-    private String serviceUrl = "http://l10n.ws/api/v1/m";
+    private String serviceUrl = "https://l10n.ws/api/v1";
     private String accessToken;
     private String bundleKey;
     private String version;

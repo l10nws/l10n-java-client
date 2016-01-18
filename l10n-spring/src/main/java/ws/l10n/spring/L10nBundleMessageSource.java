@@ -3,8 +3,8 @@ package ws.l10n.spring;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.support.AbstractMessageSource;
 import ws.l10n.core.ReloadableMessageContext;
+import ws.l10n.core.impl.MessageContextFactory;
 import ws.l10n.core.impl.Options;
-import ws.l10n.core.impl.ReloadableMessageContextImpl;
 
 import java.text.MessageFormat;
 import java.util.Locale;
@@ -33,7 +33,7 @@ public class L10nBundleMessageSource extends AbstractMessageSource implements In
      * @throws Exception
      */
     public void afterPropertiesSet() throws Exception {
-        messageContext = new ReloadableMessageContextImpl(generateOptions());
+        messageContext = MessageContextFactory.create(generateOptions());
     }
 
     private Options generateOptions() {
