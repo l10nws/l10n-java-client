@@ -1,6 +1,8 @@
 version 'unspecified'
 
 apply plugin: 'java'
+apply plugin: 'maven'
+apply plugin: 'maven-publish'
 
 sourceCompatibility = 1.5
 
@@ -19,4 +21,14 @@ dependencies {
     testCompile 'org.powermock:powermock-api-support:1.6.4'
     testCompile 'org.powermock:powermock-api-easymock:1.6.4'
     testCompile 'org.easymock:easymock:3.4'
+}
+
+
+uploadArchives {
+    repositories.mavenInstaller {
+        pom.groupId = 'ws.l10n'
+        pom.artifactId = 'l10n-spring'
+        pom.version = '1.0'
+        pom.packaging = 'jar'
+    }
 }

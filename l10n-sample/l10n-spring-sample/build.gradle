@@ -1,0 +1,12 @@
+
+apply plugin: 'java'
+
+sourceCompatibility = 1.5
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile 'ws.l10n:l10n-spring:1.0'
+}

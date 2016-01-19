@@ -22,6 +22,9 @@ dependencies {
 publishing {
     publications {
         publishPlugin(MavenPublication) {
+            groupId 'ws.l10n'
+            artifactId 'l10n-gradle-plugin'
+            version '1.0'
             from components.java
         }
     }
