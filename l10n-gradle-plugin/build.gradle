@@ -1,9 +1,11 @@
-group 'ws.l10n'
-version '1.0'
-
 apply plugin: 'java'
 apply plugin: 'maven'
 apply plugin: 'maven-publish'
+apply plugin: 'signing'
+
+group = "ws.l10n"
+archivesBaseName = "l10n-gradle-plugin"
+version = "1.0.0"
 
 sourceCompatibility = 1.5
 
@@ -19,13 +21,91 @@ dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.11'
 }
 
+javadoc {
+    description = "Generates project-level javadoc for use in -javadoc jar"
+    options.memberLevel = org.gradle.external.javadoc.JavadocMemberLevel.PROTECTED
+    options.author = true
+    options.addStringOption('Xdoclint:none', '-quiet')
+    logging.captureStandardError LogLevel.INFO
+    logging.captureStandardOutput LogLevel.INFO // suppress "## warnings" message
+}
+
+task javadocJar(type: Jar) {
+    classifier = 'javadoc'
+    from javadoc
+}
+
+task sourcesJar(type: Jar) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+artifacts {
+    archives javadocJar, sourcesJar
+}
+
+signing {
+    sign configurations.archives
+}
+
+
 publishing {
     publications {
-        publishPlugin(MavenPublication) {
-            groupId 'ws.l10n'
-            artifactId 'l10n-gradle-plugin'
-            version '1.0'
+        mavenJava(MavenPublication) {
+            groupId group
+            artifactId archivesBaseName
+            version version
             from components.java
+        }
+    }
+}
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+            repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+                authentication(userName: ossrhUsername, password: ossrhPassword)
+            }
+
+            snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
+                authentication(userName: ossrhUsername, password: ossrhPassword)
+            }
+
+            pom.project {
+                name 'L10n Java Core Project'
+                packaging 'jar'
+                // optionally artifactId can be defined here
+                description 'Library for working with L10n service API in java'
+                url 'http://l10n.ws/doc'
+
+                scm {
+                    connection 'https://github.com/l10nws/l10n-java.git'
+                    developerConnection 'https://github.com/l10nws/l10n-java.git'
+                    url 'https://github.com/l10nws/l10n-java.git'
+                }
+
+                licenses {
+                    license {
+                        name 'The Apache License, Version 2.0'
+                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+
+                developers {
+                    developer {
+                        id 'serhii_bohutskyi'
+                        name 'Serhii Bohutskyi'
+                        email 'sergey.boguckiy@gmail.com'
+                    }
+                    developer {
+                        id 'anton_mokshyn'
+                        name 'Anton Mokshyn'
+                        email 'mokshino@gmail.com'
+                    }
+                }
+            }
         }
     }
 }

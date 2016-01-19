@@ -18,9 +18,9 @@ class ReloadableMessageContextImpl implements ReloadableMessageContext {
 
     private final Options options;
     private MessageRestClient restClient;
-    private final AtomicReference<Map<Locale, MessagePack>> lookupMessageBundles =
+    private final AtomicReference<Map<Locale, MessagePack>> lookupMessagePacks =
             new AtomicReference<Map<Locale, MessagePack>>();
-    private final AtomicReference<MessagePack> lookupDefaultMessageBundle = new AtomicReference<MessagePack>();
+    private final AtomicReference<MessagePack> lookupDefaultMessagePack = new AtomicReference<MessagePack>();
     private ReloadableThread reloadableThread;
     private final ReentrantLock lock = new ReentrantLock();
     private final AtomicBoolean initialized = new AtomicBoolean();
@@ -69,8 +69,8 @@ class ReloadableMessageContextImpl implements ReloadableMessageContext {
     public void reload() {
         synchronized (lock) {
             Response response = restClient.load(options.getBundleKey(), options.getVersion());
-            lookupDefaultMessageBundle.set(response.getMessagePacks().get(response.getDefaultLocale()));
-            lookupMessageBundles.set(response.getMessagePacks());
+            lookupDefaultMessagePack.set(response.getMessagePacks().get(response.getDefaultLocale()));
+            lookupMessagePacks.set(response.getMessagePacks());
             lock.notifyAll();
         }
     }
@@ -84,7 +84,7 @@ class ReloadableMessageContextImpl implements ReloadableMessageContext {
 
         MessagePack messagePack = getMessagePack(locale);
         if (messagePack == null) {//no such pack for locale
-            messagePack = lookupDefaultMessageBundle.get();
+            messagePack = lookupDefaultMessagePack.get();
         }
         String message = messagePack != null ? messagePack.getMessage(code) : null;
         if (message == null) {
@@ -110,13 +110,13 @@ class ReloadableMessageContextImpl implements ReloadableMessageContext {
     public Iterable<MessagePack> getMessagePacks() {
         waitIfNotLoaded();
 
-        return lookupMessageBundles.get().values();
+        return lookupMessagePacks.get().values();
     }
 
     public Iterable<Locale> getSupportedLocales() {
         waitIfNotLoaded();
 
-        return lookupMessageBundles.get().keySet();
+        return lookupMessagePacks.get().keySet();
     }
 
 
@@ -125,11 +125,11 @@ class ReloadableMessageContextImpl implements ReloadableMessageContext {
     }
 
     private boolean isLoaded() {
-        return lookupMessageBundles.get() != null;
+        return lookupMessagePacks.get() != null;
     }
 
     private Map<Locale, MessagePack> getLookup() {
-        return lookupMessageBundles.get();
+        return lookupMessagePacks.get();
     }
 
     private void waitIfNotLoaded() {
