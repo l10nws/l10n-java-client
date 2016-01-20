@@ -1,14 +1,37 @@
 package ws.l10n.core.impl;
 
+/**
+ * Options of message context.
+ */
 public class Options {
 
+    /**
+     * Url of the service
+     */
     private String serviceUrl;
+    /**
+     * User access token.
+     */
     private String accessToken;
+    /**
+     * Bundle key.
+     */
     private String bundleKey;
+    /**
+     * Version of bundle.
+     */
     private String version;
 
+    /**
+     * Reload period in milliseconds. Can't be less then one minute.
+     */
     private int reloadPeriod;
+    /**
+     * Use code as default message if message with such code not exists.
+     */
     private boolean useCodeAsDefaultMessage = true;
+
+
 
     public Options() {
     }

@@ -12,6 +12,11 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
+ * Implementation of {@link ReloadableMessageContext}.
+ * <p/>
+ * Starts one thread if reload period set more then 1 minute for reloading all messages.
+ * *
+ *
  * @author Serhii Bohutskyi
  */
 class ReloadableMessageContextImpl implements ReloadableMessageContext {

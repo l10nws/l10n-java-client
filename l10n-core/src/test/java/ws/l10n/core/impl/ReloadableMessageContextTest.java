@@ -5,6 +5,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
+import ws.l10n.core.ReloadableMessageContext;
 import ws.l10n.rest.client.MessagePack;
 import ws.l10n.rest.client.MessageRestClient;
 import ws.l10n.rest.client.Response;
@@ -27,6 +28,15 @@ public class ReloadableMessageContextTest {
 
     @Test
     public void contextTest() throws InterruptedException {
+        Options options = new Options()
+                .setServiceUrl("serviceUrl")
+                .setAccessToken("accessToken")
+                .setBundleKey("bundleKey")
+                .setVersion("1.0.0")
+                .setReloadPeriod(70 * 1000)
+                .setUseCodeAsDefaultMessage(false);
+
+        ReloadableMessageContext messageContext = MessageContextFactory.create(options);
 
         MessageRestClient restClient = createMock(MessageRestClient.class);
 
