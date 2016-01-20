@@ -21,7 +21,7 @@ public class L10nBundleMessageSource extends AbstractMessageSource implements In
 
     private String serviceUrl;
     private String accessToken;
-    private String bundleUid;
+    private String bundleKey;
     private String version;
     private int reloadPeriod;
     private boolean useCodeAsDefaultMessage;
@@ -38,7 +38,7 @@ public class L10nBundleMessageSource extends AbstractMessageSource implements In
 
     private Options generateOptions() {
         return new Options()
-                .setBundleKey(bundleUid)
+                .setBundleKey(bundleKey)
                 .setAccessToken(accessToken)
                 .setReloadPeriod(reloadPeriod)
                 .setServiceUrl(serviceUrl)
@@ -89,12 +89,12 @@ public class L10nBundleMessageSource extends AbstractMessageSource implements In
         this.version = version;
     }
 
-    public String getBundleUid() {
-        return bundleUid;
+    public String getBundleKey() {
+        return bundleKey;
     }
 
-    public void setBundleUid(String bundleUid) {
-        this.bundleUid = bundleUid;
+    public void setBundleKey(String bundleKey) {
+        this.bundleKey = bundleKey;
     }
 
     public String getAccessToken() {

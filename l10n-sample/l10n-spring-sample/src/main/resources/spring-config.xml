@@ -3,4 +3,12 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
+    <bean id="messageSource" class="ws.l10n.spring.L10nBundleMessageSource">
+        <property name="serviceUrl">${serviceUrl}</property>
+        <property name="accessToken">${accessToken}</property>
+        <property name="bundleKey">${bundleKey}</property>
+        <property name="version">${version}</property>
+        <property name="reloadPeriod">${reloadPeriod}</property>
+        <property name="useCodeAsDefaultMessage">${useCodeAsDefaultMessage}</property>
+    </bean>
 </beans>

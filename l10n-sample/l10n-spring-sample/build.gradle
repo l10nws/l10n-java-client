@@ -8,5 +8,5 @@ repositories {
 }
 
 dependencies {
-    compile 'ws.l10n:l10n-spring:1.0'
+    compile 'ws.l10n:l10n-spring:1.0.0'
 }
