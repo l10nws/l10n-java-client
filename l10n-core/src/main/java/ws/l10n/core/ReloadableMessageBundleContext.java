@@ -9,7 +9,6 @@ import java.util.Locale;
 /**
  * Implementation of {@link MessageBundleContext}.
  *
- *
  * @author Serhii Bohutskyi
  * @author Anton Mokshyn
  */
@@ -22,7 +21,7 @@ class ReloadableMessageBundleContext implements MessageBundleContext {
 
     private MessageBundle messageBundle = null;
 
-    private volatile Boolean reload = true;
+    private volatile Boolean initialized = false;
 
     public ReloadableMessageBundleContext(L10nClient l10nClient, String bundleKey, String bundleVersion) {
         if (l10nClient == null) {
@@ -37,18 +36,25 @@ class ReloadableMessageBundleContext implements MessageBundleContext {
         this.l10nClient = l10nClient;
         this.bundleKey = bundleKey;
         this.bundleVersion = bundleVersion;
+
+        reload();
     }
 
-    public void reload() {
-        reload = true;
+    public synchronized void reload() {
+        initialized = false;
+        messageBundle = l10nClient.loadMessageBundle(bundleKey, bundleVersion);
+        initialized = true;
     }
 
     private MessageBundle getMessageBundle() {
-        if (reload) {
+        if (!initialized) {
             synchronized (this) {
-                if (reload) {
-                    messageBundle = l10nClient.loadMessageBundle(bundleKey, bundleVersion);
-                    reload = false;
+                while (initialized) {
+                    try {
+                        wait();
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
                 }
             }
         }

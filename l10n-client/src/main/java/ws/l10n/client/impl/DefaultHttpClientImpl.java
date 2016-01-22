@@ -16,8 +16,6 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-import static ws.l10n.client.utils.LocaleUtils.toLocale;
-
 /**
  * @author Serhii Bohutskyi
  */
@@ -169,5 +167,10 @@ public class DefaultHttpClientImpl implements L10nClient {
         }
 
         return builder.toString();
+    }
+
+    private Locale toLocale(String display) {
+        String[] lc = display.split("_");
+        return new Locale(lc[0], lc[1]);
     }
 }
