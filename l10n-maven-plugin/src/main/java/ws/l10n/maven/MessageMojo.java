@@ -5,10 +5,10 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
-import ws.l10n.rest.client.MessagePack;
-import ws.l10n.rest.client.MessageRestClient;
-import ws.l10n.rest.client.Response;
-import ws.l10n.rest.client.impl.MessageRestClientImpl;
+import ws.l10n.client.MessagePack;
+import ws.l10n.client.MessageRestClient;
+import ws.l10n.client.Response;
+import ws.l10n.client.impl.MessageRestClientImpl;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;

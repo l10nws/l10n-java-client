@@ -57,7 +57,7 @@
         </dependency>
         <dependency>
             <groupId>ws.l10n</groupId>
-            <artifactId>l10n-rest-client</artifactId>
+            <artifactId>l10n-client</artifactId>
             <version>1.0</version>
         </dependency>
         <dependency>
