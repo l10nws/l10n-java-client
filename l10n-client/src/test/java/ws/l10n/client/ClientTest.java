@@ -12,12 +12,12 @@ import ws.l10n.client.mock.HttpUrlConnectionMock;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Locale;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.powermock.api.easymock.PowerMock.*;
-import static ws.l10n.client.utils.LocaleUtils.toLocale;
 
 /**
  * @author Serhii Bohutskyi
@@ -68,13 +68,13 @@ public class ClientTest {
         MessageBundle messageBundle = client.loadMessageBundle("bundleId", "version", locales);
 
         assertNotNull(messageBundle);
-        assertEquals(toLocale("en_US"), messageBundle.getDefaultLocale());
+        assertEquals(new Locale("en", "US"), messageBundle.getDefaultLocale());
 
-        Map<String, String> enUsMessages = messageBundle.getMessages().get(toLocale("en_US")).getMessages();
+        Map<String, String> enUsMessages = messageBundle.getMessages().get(new Locale("en", "US")).getMessages();
         assertEquals("bar", enUsMessages.get("foo"));
         assertEquals("baz", enUsMessages.get("biz"));
 
-        Map<String, String> enUkMessages = messageBundle.getMessages().get(toLocale("en_UK")).getMessages();
+        Map<String, String> enUkMessages = messageBundle.getMessages().get(new Locale("en", "US")).getMessages();
         assertEquals("Zzyzx", enUkMessages.get("Xyzzy"));
         assertEquals("fu", enUkMessages.get("sna"));
 
