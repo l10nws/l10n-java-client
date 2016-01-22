@@ -4,17 +4,14 @@ apply plugin: 'maven-publish'
 apply plugin: 'signing'
 
 group = "ws.l10n"
-archivesBaseName = "l10n-core"
+archivesBaseName = "l10n-client"
 version = "1.0.0"
-
-sourceCompatibility = 1.5
 
 repositories {
     mavenCentral()
 }
 
 dependencies {
-    compile project(":l10n-client")
 
     testCompile 'junit:junit:4.12'
     testCompile 'org.powermock:powermock-module-junit4:1.6.4'
@@ -22,6 +19,7 @@ dependencies {
     testCompile 'org.powermock:powermock-api-support:1.6.4'
     testCompile 'org.powermock:powermock-api-easymock:1.6.4'
     testCompile 'org.easymock:easymock:3.4'
+
 }
 
 javadoc {
