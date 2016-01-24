@@ -1,13 +1,14 @@
 package ws.l10n.core;
 
 import ws.l10n.client.L10nClient;
-import ws.l10n.client.MessageBundle;
-import ws.l10n.client.MessageItem;
 
 import java.util.Locale;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
- * Implementation of {@link MessageBundleContext}.
+ * Reloadable implementation of {@link MessageBundleContext}.
  *
  * @author Serhii Bohutskyi
  * @author Anton Mokshyn
@@ -19,9 +20,11 @@ class ReloadableMessageBundleContext implements MessageBundleContext {
     private final String bundleKey;
     private final String bundleVersion;
 
-    private MessageBundle messageBundle = null;
+    private final ReadWriteLock rwl = new ReentrantReadWriteLock();
+    private final Lock r = rwl.readLock();
+    private final Lock w = rwl.writeLock();
 
-    private volatile Boolean initialized = false;
+    private final SimpleMessageBundleContext messageBundleContext = new SimpleMessageBundleContext(null);
 
     public ReloadableMessageBundleContext(L10nClient l10nClient, String bundleKey, String bundleVersion) {
         if (l10nClient == null) {
@@ -36,49 +39,37 @@ class ReloadableMessageBundleContext implements MessageBundleContext {
         this.l10nClient = l10nClient;
         this.bundleKey = bundleKey;
         this.bundleVersion = bundleVersion;
+    }
 
+    public void init() {
         reload();
     }
 
-    public synchronized void reload() {
-        initialized = false;
-        messageBundle = l10nClient.loadMessageBundle(bundleKey, bundleVersion);
-        initialized = true;
-    }
-
-    private MessageBundle getMessageBundle() {
-        if (!initialized) {
-            synchronized (this) {
-                while (initialized) {
-                    try {
-                        wait();
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
-                    }
-                }
-            }
+    public void reload() {
+        w.lock();
+        try {
+            messageBundleContext.setMessageBundle(l10nClient.loadMessageBundle(bundleKey, bundleVersion));
+        } finally {
+            w.unlock();
         }
-        return messageBundle;
     }
 
-    @Override
     public String getMessage(String code, Locale locale) {
-        return getMessage(code, locale, null);
-    }
-
-    @Override
-    public String getMessage(String code, Locale locale, String defaultMessage) {
-
-        MessageBundle messageBundle = getMessageBundle();
-        Locale defaultLocale = messageBundle.getDefaultLocale();
-
-        MessageItem messageItem = messageBundle.getMessages().get(locale);
-        if (messageItem == null) {
-            messageItem = messageBundle.getMessages().get(defaultLocale);
+        r.lock();
+        try {
+            return messageBundleContext.getMessage(code, locale);
+        } finally {
+            r.unlock();
         }
-
-        return messageItem != null ? messageItem.getMessage(code) : defaultMessage;
     }
 
+    public String getMessage(String code, Locale locale, String defaultMessage) {
+        r.lock();
+        try {
+            return messageBundleContext.getMessage(code, locale, defaultMessage);
+        } finally {
+            r.unlock();
+        }
+    }
 
 }
