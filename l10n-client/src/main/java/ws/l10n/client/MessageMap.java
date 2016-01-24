@@ -6,7 +6,7 @@ import java.util.Map;
 /**
  * Interface describes bunch of messages by locale.
  */
-public interface MessageItem {
+public interface MessageMap {
 
     /**
      * Gets key-value map.

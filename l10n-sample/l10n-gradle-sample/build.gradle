@@ -7,7 +7,7 @@ buildscript {
         mavenLocal()
     }
     dependencies {
-        classpath 'ws.l10n:l10n-gradle-plugin:1.0'
+        classpath 'ws.l10n:l10n-gradle-plugin:1.0.1'
     }
 
 }

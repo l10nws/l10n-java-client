@@ -1,14 +1,14 @@
 allprojects {
     group = 'ws.l10n'
-    version = '1.0.0'
+    version = '1.0.1'
 }
 
 subprojects {
     apply plugin: 'java'
-    repositories{
+    repositories {
         mavenCentral()
     }
     dependencies {
-    
+
     }
 }

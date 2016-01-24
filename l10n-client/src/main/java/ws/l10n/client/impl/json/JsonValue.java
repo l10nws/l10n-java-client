@@ -47,7 +47,7 @@ public abstract class JsonValue implements Serializable {
         buffer.flush();
     }
 
-    @Override
+
     public String toString() {
         return toString(WriterConfig.MINIMAL);
     }
@@ -63,12 +63,12 @@ public abstract class JsonValue implements Serializable {
         return writer.toString();
     }
 
-    @Override
+
     public boolean equals(Object object) {
         return super.equals(object);
     }
 
-    @Override
+
     public int hashCode() {
         return super.hashCode();
     }

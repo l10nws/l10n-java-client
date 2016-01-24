@@ -7,16 +7,16 @@
 
     <artifactId>l10n-maven-sample</artifactId>
     <groupId>ws.l10n</groupId>
-    <version>1.0</version>
+    <version>1.0.1</version>
 
     <build>
         <plugins>
             <plugin>
                 <groupId>ws.l10n</groupId>
                 <artifactId>l10n-maven-plugin</artifactId>
-                <version>1.0</version>
+                <version>1.0.1</version>
                 <configuration>
-                    <serviceUrl>http://localhost:9000/api/v1/m</serviceUrl>
+                    <serviceUrl>http://localhost:9000/api/v1</serviceUrl>
                     <accessToken>C85hg</accessToken>
                     <bundleKey>C85hg</bundleKey>
                     <version>1</version>

@@ -1,9 +1,9 @@
 package ws.l10n.client.impl;
 
-import ws.l10n.client.L10nClientException;
-import ws.l10n.client.MessageItem;
 import ws.l10n.client.L10nClient;
+import ws.l10n.client.L10nClientException;
 import ws.l10n.client.MessageBundle;
+import ws.l10n.client.MessageMap;
 import ws.l10n.client.impl.json.*;
 
 import java.io.IOException;
@@ -80,7 +80,7 @@ public class DefaultHttpClientImpl implements L10nClient {
             JsonObject jsonObject = jsonValue.asObject();
 
             Locale defaultLocale = toLocale(jsonObject.getString(DEFAULT_LOCALE, "en_US"));
-            Map<Locale, MessageItem> map = parseContent(jsonObject);
+            Map<Locale, MessageMap> map = parseContent(jsonObject);
             return new MessageBundleImpl(defaultLocale, map);
 
         } catch (IOException e) {
@@ -119,8 +119,8 @@ public class DefaultHttpClientImpl implements L10nClient {
         return (HttpURLConnection) url.openConnection();
     }
 
-    private Map<Locale, MessageItem> parseContent(JsonObject jsonObject) {
-        Map<Locale, MessageItem> result = new HashMap<Locale, MessageItem>();
+    private Map<Locale, MessageMap> parseContent(JsonObject jsonObject) {
+        Map<Locale, MessageMap> result = new HashMap<Locale, MessageMap>();
 
         JsonArray locales = jsonObject.get(CONTENT).asArray();
         for (JsonValue localeMessages : locales) {
@@ -133,7 +133,7 @@ public class DefaultHttpClientImpl implements L10nClient {
             }
             Locale locale = toLocale(localeMessages.asObject().get(LOCALE).asString());
 
-            result.put(locale, new MessageItemImpl(messagesMap, locale));
+            result.put(locale, new MessageMapImpl(messagesMap, locale));
         }
         return result;
     }

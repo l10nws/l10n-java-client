@@ -5,7 +5,7 @@ import java.io.Writer;
 public abstract class WriterConfig {
 
     public static WriterConfig MINIMAL = new WriterConfig() {
-        @Override
+
         JsonWriter createWriter(Writer writer) {
             return new JsonWriter(writer);
         }

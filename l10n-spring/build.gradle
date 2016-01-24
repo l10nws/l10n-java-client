@@ -3,9 +3,7 @@ apply plugin: 'maven'
 apply plugin: 'maven-publish'
 apply plugin: 'signing'
 
-group = "ws.l10n"
 archivesBaseName = "l10n-spring"
-version = "1.0.0"
 
 sourceCompatibility = 1.5
 
@@ -78,7 +76,7 @@ uploadArchives {
             }
 
             pom.project {
-                name 'L10n Java Core Project'
+                name 'L10n Java Spring Project'
                 packaging 'jar'
                 // optionally artifactId can be defined here
                 description 'Library for working with L10n service API in java'

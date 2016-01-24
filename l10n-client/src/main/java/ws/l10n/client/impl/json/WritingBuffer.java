@@ -15,7 +15,7 @@ class WritingBuffer extends Writer {
         buffer = new char[bufferSize];
     }
 
-    @Override
+
     public void write(int c) throws IOException {
         if (fill > buffer.length - 1) {
             flush();
@@ -23,7 +23,7 @@ class WritingBuffer extends Writer {
         buffer[fill++] = (char) c;
     }
 
-    @Override
+
     public void write(char[] cbuf, int off, int len) throws IOException {
         if (fill > buffer.length - len) {
             flush();
@@ -36,7 +36,7 @@ class WritingBuffer extends Writer {
         fill += len;
     }
 
-    @Override
+
     public void write(String str, int off, int len) throws IOException {
         if (fill > buffer.length - len) {
             flush();
@@ -52,7 +52,7 @@ class WritingBuffer extends Writer {
     /**
      * Flushes the internal buffer but does not flush the wrapped writer.
      */
-    @Override
+
     public void flush() throws IOException {
         writer.write(buffer, 0, fill);
         fill = 0;
@@ -61,7 +61,7 @@ class WritingBuffer extends Writer {
     /**
      * Does not close or flush the wrapped writer.
      */
-    @Override
+
     public void close() throws IOException {
     }
 

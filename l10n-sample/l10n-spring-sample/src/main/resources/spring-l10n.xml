@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!--L10n Service Client-->
+    <bean id="l10nClient" class="ws.l10n.client.impl.DefaultHttpClientImpl">
+        <constructor-arg value="${l10n.serviceUrl}"/>
+        <constructor-arg value="${l10n.accessToken}"/>
+    </bean>
+
+    <!--Reloadable Message Bundle Context-->
+    <bean id="l10nContext" class="ws.l10n.core.ReloadableMessageBundleContext">
+        <constructor-arg ref="l10nClient"/>
+        <constructor-arg value="${l10n.bundleKey}"/>
+        <constructor-arg value="${l10n.bundleVersion}"/>
+    </bean>
+
+    <bean id="messageSource" class="ws.l10n.spring.L10nBundleMessageSource">
+        <constructor-arg ref="l10nContext"/>
+    </bean>
+
+</beans>

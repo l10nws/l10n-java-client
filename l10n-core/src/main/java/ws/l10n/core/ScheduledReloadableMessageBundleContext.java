@@ -32,7 +32,7 @@ public class ScheduledReloadableMessageBundleContext extends ReloadableMessageBu
 
     public void start() {
         scheduler.scheduleAtFixedRate(new Runnable() {
-            @Override
+
             public void run() {
                 reload();
             }

@@ -1,7 +1,7 @@
 package ws.l10n.core;
 
 import ws.l10n.client.MessageBundle;
-import ws.l10n.client.MessageItem;
+import ws.l10n.client.MessageMap;
 
 import java.util.Locale;
 
@@ -28,12 +28,12 @@ public class SimpleMessageBundleContext implements MessageBundleContext {
 
         Locale defaultLocale = messageBundle.getDefaultLocale();
 
-        MessageItem messageItem = messageBundle.getMessages().get(locale);
-        if (messageItem == null) {
-            messageItem = messageBundle.getMessages().get(defaultLocale);
+        MessageMap messageMap = messageBundle.getMessages().get(locale);
+        if (messageMap == null) {
+            messageMap = messageBundle.getMessages().get(defaultLocale);
         }
 
-        return messageItem != null ? messageItem.getMessage(code) : defaultMessage;
+        return messageMap != null ? messageMap.getMessage(code) : defaultMessage;
 
     }
 }

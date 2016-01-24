@@ -1,7 +1,7 @@
 package ws.l10n.client.impl;
 
-import ws.l10n.client.MessageItem;
 import ws.l10n.client.MessageBundle;
+import ws.l10n.client.MessageMap;
 
 import java.util.Locale;
 import java.util.Map;
@@ -13,20 +13,18 @@ import java.util.Map;
 public class MessageBundleImpl implements MessageBundle {
 
     private final Locale defLocale;
-    private final Map<Locale, MessageItem> messages;
+    private final Map<Locale, MessageMap> messages;
 
-    public MessageBundleImpl(Locale defLocale, Map<Locale, MessageItem> messages) {
+    public MessageBundleImpl(Locale defLocale, Map<Locale, MessageMap> messages) {
         this.defLocale = defLocale;
         this.messages = messages;
     }
 
-    @Override
     public Locale getDefaultLocale() {
         return defLocale;
     }
 
-    @Override
-    public Map<Locale, MessageItem> getMessages() {
+    public Map<Locale, MessageMap> getMessages() {
         return messages;
     }
 

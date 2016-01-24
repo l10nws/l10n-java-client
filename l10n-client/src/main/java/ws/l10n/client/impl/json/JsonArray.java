@@ -39,7 +39,7 @@ public class JsonArray extends JsonValue implements Iterable<JsonValue> {
         };
     }
 
-    @Override
+
     void write(JsonWriter writer) throws IOException {
         writer.writeArrayOpen();
         Iterator<JsonValue> iterator = iterator();
@@ -54,17 +54,17 @@ public class JsonArray extends JsonValue implements Iterable<JsonValue> {
         writer.writeArrayClose();
     }
 
-    @Override
+
     public JsonArray asArray() {
         return this;
     }
 
-    @Override
+
     public int hashCode() {
         return values.hashCode();
     }
 
-    @Override
+
     public boolean equals(Object object) {
         if (this == object) {
             return true;

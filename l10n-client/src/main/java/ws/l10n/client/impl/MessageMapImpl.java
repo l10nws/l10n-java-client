@@ -1,6 +1,6 @@
 package ws.l10n.client.impl;
 
-import ws.l10n.client.MessageItem;
+import ws.l10n.client.MessageMap;
 
 import java.util.Locale;
 import java.util.Map;
@@ -9,12 +9,12 @@ import java.util.Map;
  * @author Serhii Bohutskyi
  * @author Anton Mokshyn
  */
-public class MessageItemImpl implements MessageItem {
+public class MessageMapImpl implements MessageMap {
 
     private final Map<String, String> messages;
     private final Locale locale;
 
-    public MessageItemImpl(Map<String, String> messages, Locale locale) {
+    public MessageMapImpl(Map<String, String> messages, Locale locale) {
         this.messages = messages;
         this.locale = locale;
     }
@@ -34,7 +34,7 @@ public class MessageItemImpl implements MessageItem {
     /**
      *  serialization
      */
-    private MessageItemImpl() {
+    private MessageMapImpl() {
         this.messages = null;
         this.locale = null;
     }

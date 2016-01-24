@@ -2,6 +2,17 @@ package ws.l10n.gradle;
 
 import org.gradle.api.DefaultTask;
 import org.gradle.api.tasks.TaskAction;
+import ws.l10n.client.L10nClient;
+import ws.l10n.client.MessageBundle;
+import ws.l10n.client.MessageMap;
+import ws.l10n.client.impl.DefaultHttpClientImpl;
+
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.Locale;
+import java.util.Map;
 
 public class LoadMessagesTask extends DefaultTask {
 
@@ -10,16 +21,17 @@ public class LoadMessagesTask extends DefaultTask {
         getLogger().info("LoadMessages task start");
         L10nExtension extension = getProject().getExtensions().findByType(L10nExtension.class);
         validate(extension);
-//
-//        MessageClient restClient = new MessageRestClientImpl(extension.getServiceUrl(), extension.getAccessToken());
-//        Response response = restClient.load(extension.getBundleKey(), extension.getVersion());
-//        getLogger().info("Successfully loaded packs " + response.getMessagePacks().size());
-//        Locale defaultLocale = response.getDefaultLocale();
-//        Map<Locale, MessagePack> packs = response.getMessagePacks();
-//
-//        for (MessagePack messagePack : packs.values()) {
-//            writeToFile(messagePack, messagePack.getLocale().equals(defaultLocale), extension);
-//        }
+
+        L10nClient l10nClient = new DefaultHttpClientImpl(extension.getServiceUrl(), extension.getAccessToken());
+        MessageBundle messageBundle = l10nClient.loadMessageBundle(extension.getBundleKey(), extension.getVersion());
+        getLogger().info("Successfully loaded packs " + messageBundle.getMessages().size());
+
+        Locale defaultLocale = messageBundle.getDefaultLocale();
+        Map<Locale, MessageMap> messages = messageBundle.getMessages();
+
+        for (MessageMap messageMap : messages.values()) {
+            writeToFile(messageMap, messageMap.getLocale().equals(defaultLocale), extension);
+        }
 
         getLogger().info("LoadMessages task end");
 
@@ -49,31 +61,31 @@ public class LoadMessagesTask extends DefaultTask {
     private boolean isEmpty(String str) {
         return str == null || str.equals("");
     }
-//
-//    private void writeToFile(MessagePack messagePack, boolean isDefault, L10nExtension extension) {
-//        String fileName = extension.getBaseName() + (isDefault ? "" : "_" + messagePack.getLocale());
-//        File dir = new File(extension.getPath());
-//        if (dir.mkdirs()) {
-//            getLogger().warn("Directories created");
-//        }
-//        String filePath = (extension.getPath().endsWith("/") ?
-//                extension.getPath() + fileName : extension.getPath() + "/" + fileName) + ".properties";
-//        BufferedWriter out = null;
-//        try {
-//            getLogger().info("Write pack with locale " + messagePack.getLocale().getDisplayName() +" to file '" +
-//            filePath +"'");
-//
-//            out = new BufferedWriter(new FileWriter(filePath));
-//            out.write(header);
-//
-//            for (Map.Entry<String, String> entry : messagePack.getMessages().entrySet()) {
-//                out.write(entry.getKey() + "=" + entry.getValue() + "\n");
-//            }
-//            out.close();
-//        } catch (IOException e) {
-//            throw new RuntimeException("Cannot create message file!");
-//        }
-//    }
+
+    private void writeToFile(MessageMap messageMap, boolean isDefault, L10nExtension extension) {
+        String fileName = extension.getBaseName() + (isDefault ? "" : "_" + messageMap.getLocale());
+        File dir = new File(extension.getPath());
+        if (dir.mkdirs()) {
+            getLogger().warn("Directories created");
+        }
+        String filePath = (extension.getPath().endsWith("/") ?
+                extension.getPath() + fileName : extension.getPath() + "/" + fileName) + ".properties";
+        BufferedWriter out = null;
+        try {
+            getLogger().info("Write pack with locale " + messageMap.getLocale().getDisplayName() + " to file '" +
+                    filePath + "'");
+
+            out = new BufferedWriter(new FileWriter(filePath));
+            out.write(header);
+
+            for (Map.Entry<String, String> entry : messageMap.getMessages().entrySet()) {
+                out.write(entry.getKey() + "=" + entry.getValue() + "\n");
+            }
+            out.close();
+        } catch (IOException e) {
+            throw new RuntimeException("Cannot create message file!");
+        }
+    }
 
     private String header =
             "########################################################################################################################\n" +

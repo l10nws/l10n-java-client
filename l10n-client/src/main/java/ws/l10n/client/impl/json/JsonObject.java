@@ -68,7 +68,7 @@ public class JsonObject extends JsonValue implements Iterable<JsonObject.Member>
         };
     }
 
-    @Override
+
     void write(JsonWriter writer) throws IOException {
         writer.writeObjectOpen();
         Iterator<String> namesIterator = names.iterator();
@@ -86,12 +86,12 @@ public class JsonObject extends JsonValue implements Iterable<JsonObject.Member>
         writer.writeObjectClose();
     }
 
-    @Override
+
     public JsonObject asObject() {
         return this;
     }
 
-    @Override
+
     public int hashCode() {
         int result = 1;
         result = 31 * result + names.hashCode();
@@ -99,7 +99,7 @@ public class JsonObject extends JsonValue implements Iterable<JsonObject.Member>
         return result;
     }
 
-    @Override
+
     public boolean equals(Object obj) {
         if (this == obj) {
             return true;
@@ -167,7 +167,7 @@ public class JsonObject extends JsonValue implements Iterable<JsonObject.Member>
             return value;
         }
 
-        @Override
+
         public int hashCode() {
             int result = 1;
             result = 31 * result + name.hashCode();
@@ -175,7 +175,7 @@ public class JsonObject extends JsonValue implements Iterable<JsonObject.Member>
             return result;
         }
 
-        @Override
+
         public boolean equals(Object obj) {
             if (this == obj) {
                 return true;

@@ -17,32 +17,32 @@ class JsonLiteral extends JsonValue {
         isFalse = "false".equals(value);
     }
 
-    @Override
+
     void write(JsonWriter writer) throws IOException {
         writer.writeLiteral(value);
     }
 
-    @Override
+
     public String toString() {
         return value;
     }
 
-    @Override
+
     public int hashCode() {
         return value.hashCode();
     }
 
-    @Override
+
     public boolean isNull() {
         return isNull;
     }
 
-    @Override
+
     public boolean asBoolean() {
         return isNull ? super.asBoolean() : isTrue;
     }
 
-    @Override
+
     public boolean equals(Object object) {
         if (this == object) {
             return true;

@@ -4,12 +4,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-import ws.l10n.client.MessageItem;
 import ws.l10n.client.L10nClient;
 import ws.l10n.client.MessageBundle;
-import ws.l10n.client.impl.MessageItemImpl;
+import ws.l10n.client.MessageMap;
 import ws.l10n.client.impl.MessageBundleImpl;
-import ws.l10n.core.MessageBundleContext;
+import ws.l10n.client.impl.MessageMapImpl;
 import ws.l10n.core.ScheduledReloadableMessageBundleContext;
 
 import java.util.HashMap;
@@ -17,7 +16,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 
-import static org.easymock.EasyMock.*;
+import static org.easymock.EasyMock.createMock;
 
 /**
  * @author Serhii Bohutskyi
@@ -50,10 +49,10 @@ public class ReloadableMessageContextTest {
     }
 
     private MessageBundle createResponse() {
-        Map<Locale, MessageItem> content = new HashMap<Locale, MessageItem>();
-        content.put(Locale.ENGLISH, new MessageItemImpl(createRandomMessages(), Locale.ENGLISH));
-        content.put(Locale.CANADA, new MessageItemImpl(createRandomMessages(), Locale.CANADA));
-        content.put(Locale.CHINA, new MessageItemImpl(createRandomMessages(), Locale.CHINA));
+        Map<Locale, MessageMap> content = new HashMap<Locale, MessageMap>();
+        content.put(Locale.ENGLISH, new MessageMapImpl(createRandomMessages(), Locale.ENGLISH));
+        content.put(Locale.CANADA, new MessageMapImpl(createRandomMessages(), Locale.CANADA));
+        content.put(Locale.CHINA, new MessageMapImpl(createRandomMessages(), Locale.CHINA));
         return new MessageBundleImpl(Locale.ENGLISH, content);
     }
 

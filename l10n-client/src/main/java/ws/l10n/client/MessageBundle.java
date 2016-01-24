@@ -23,7 +23,7 @@ public interface MessageBundle {
      *
      * @return map messages
      */
-    Map<Locale, MessageItem> getMessages();
+    Map<Locale, MessageMap> getMessages();
 
 
 }

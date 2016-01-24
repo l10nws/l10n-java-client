@@ -14,22 +14,22 @@ class JsonNumber extends JsonValue {
         this.string = string;
     }
 
-    @Override
+
     public String toString() {
         return string;
     }
 
-    @Override
+
     void write(JsonWriter writer) throws IOException {
         writer.writeNumber(string);
     }
 
-    @Override
+
     public int hashCode() {
         return string.hashCode();
     }
 
-    @Override
+
     public boolean equals(Object object) {
         if (this == object) {
             return true;

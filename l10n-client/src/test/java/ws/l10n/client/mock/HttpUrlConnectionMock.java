@@ -24,27 +24,27 @@ public class HttpUrlConnectionMock extends HttpURLConnection {
         this.content = content;
     }
 
-    @Override
+
     public InputStream getInputStream() throws IOException {
         return new ByteArrayInputStream(content.getBytes("UTF-8"));
     }
 
-    @Override
+
     public int getResponseCode() throws IOException {
         return responseCode;
     }
 
-    @Override
+
     public void disconnect() {
 
     }
 
-    @Override
+
     public boolean usingProxy() {
         return false;
     }
 
-    @Override
+
     public void connect() throws IOException {
 
     }
