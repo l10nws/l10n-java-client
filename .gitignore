@@ -1,5 +1,9 @@
 # Folders #
 .idea/
+.gradle/
+.git/
+.svn/
+*/build/
 
 # Files #
 *.class
