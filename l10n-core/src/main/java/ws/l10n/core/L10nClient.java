@@ -2,7 +2,7 @@ package ws.l10n.core;
 
 /**
  * Interface describes main L10n APIs functionality
- * <p/>
+ *
  * In case of error or exceptions throws runtime {@link L10nClientException}.
  *
  * @author Serhii Bohutskyi
