@@ -57,7 +57,12 @@
         </dependency>
         <dependency>
             <groupId>ws.l10n</groupId>
-            <artifactId>l10n-client</artifactId>
+            <artifactId>l10n-core</artifactId>
+            <version>1.0.1</version>
+        </dependency>
+        <dependency>
+            <groupId>ws.l10n</groupId>
+            <artifactId>l10n-client-http</artifactId>
             <version>1.0.1</version>
         </dependency>
         <dependency>

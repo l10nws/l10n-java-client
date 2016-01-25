@@ -1,7 +1,5 @@
 package ws.l10n.core;
 
-import ws.l10n.client.L10nClient;
-
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;

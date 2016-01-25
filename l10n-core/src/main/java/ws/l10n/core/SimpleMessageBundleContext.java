@@ -1,8 +1,5 @@
 package ws.l10n.core;
 
-import ws.l10n.client.MessageBundle;
-import ws.l10n.client.MessageMap;
-
 import java.util.Locale;
 
 /**

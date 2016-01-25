@@ -4,11 +4,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-import ws.l10n.client.L10nClient;
-import ws.l10n.client.MessageBundle;
-import ws.l10n.client.MessageMap;
-import ws.l10n.client.impl.MessageBundleImpl;
-import ws.l10n.client.impl.MessageMapImpl;
+import ws.l10n.core.L10nClient;
+import ws.l10n.core.MessageBundle;
+import ws.l10n.core.MessageMap;
 import ws.l10n.core.ScheduledReloadableMessageBundleContext;
 
 import java.util.HashMap;
@@ -50,10 +48,11 @@ public class ReloadableMessageContextTest {
 
     private MessageBundle createResponse() {
         Map<Locale, MessageMap> content = new HashMap<Locale, MessageMap>();
-        content.put(Locale.ENGLISH, new MessageMapImpl(createRandomMessages(), Locale.ENGLISH));
-        content.put(Locale.CANADA, new MessageMapImpl(createRandomMessages(), Locale.CANADA));
-        content.put(Locale.CHINA, new MessageMapImpl(createRandomMessages(), Locale.CHINA));
-        return new MessageBundleImpl(Locale.ENGLISH, content);
+//        content.put(Locale.ENGLISH, new MessageMapMock(createRandomMessages(), Locale.ENGLISH));
+//        content.put(Locale.CANADA, new MessageMapMock(createRandomMessages(), Locale.CANADA));
+//        content.put(Locale.CHINA, new MessageMapMock(createRandomMessages(), Locale.CHINA));
+//        return new MessageBundleImpl(Locale.ENGLISH, content);
+        return null;
     }
 
     private Map<String, String> createRandomMessages() {
@@ -62,6 +61,7 @@ public class ReloadableMessageContextTest {
         messages.put("biz", UUID.randomUUID().toString());
         return messages;
     }
+
 
 //    private Options createOptions() {
 //        return new Options()
