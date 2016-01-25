@@ -6,8 +6,6 @@
 */build/
 
 # Files #
-*.class
-*.jar
 *.war
 *.ear
 *.iml
