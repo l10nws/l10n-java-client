@@ -23,7 +23,7 @@ import java.util.Map;
 /**
  * @author Serhii Bohutskyi
  */
-public class DefaultHttpMessageBundleClientImpl implements MessageBundleService {
+public class HttpMessageBundleClient implements MessageBundleService {
 
     //------------------- HTTP -------------------//
     private static final String ACCESS_TOKEN_HEADER = "access-token";
@@ -46,7 +46,7 @@ public class DefaultHttpMessageBundleClientImpl implements MessageBundleService 
     private final String serviceUrl;
     private final String accessToken;
 
-    public DefaultHttpMessageBundleClientImpl(String serviceUrl, String accessToken) {
+    public HttpMessageBundleClient(String serviceUrl, String accessToken) {
         if (serviceUrl == null || serviceUrl.equals("")) {
             throw new ServiceException("Service Url should be not empty");
         }

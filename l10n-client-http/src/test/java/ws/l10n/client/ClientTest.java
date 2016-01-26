@@ -6,7 +6,7 @@ import org.junit.runner.RunWith;
 import org.powermock.api.easymock.PowerMock;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-import ws.l10n.client.http.DefaultHttpMessageBundleClientImpl;
+import ws.l10n.client.http.HttpMessageBundleClient;
 import ws.l10n.client.mock.HttpUrlConnectionMock;
 import ws.l10n.core.ServiceException;
 import ws.l10n.core.MessageBundle;
@@ -27,7 +27,7 @@ import static org.powermock.api.easymock.PowerMock.verify;
  * @author Serhii Bohutskyi
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest(DefaultHttpMessageBundleClientImpl.class)
+@PrepareForTest(HttpMessageBundleClient.class)
 public class ClientTest {
 
 
@@ -43,7 +43,7 @@ public class ClientTest {
     @Test
     public void successTest() throws Exception {
 
-        DefaultHttpMessageBundleClientImpl client = PowerMock.createPartialMock(DefaultHttpMessageBundleClientImpl.class,
+        HttpMessageBundleClient client = PowerMock.createPartialMock(HttpMessageBundleClient.class,
                 new String[]{"openConnection"}, "serviceUrl", "accessToken");
         expectPrivate(client, "openConnection", "bundleId", "version", null)
                 .andReturn(new HttpUrlConnectionMock(okResponse));
@@ -62,7 +62,7 @@ public class ClientTest {
     public void successWithLocalesTest() throws Exception {
         String[] locales = {"en_US", "en_UK"};
 
-        DefaultHttpMessageBundleClientImpl client = PowerMock.createPartialMock(DefaultHttpMessageBundleClientImpl.class,
+        HttpMessageBundleClient client = PowerMock.createPartialMock(HttpMessageBundleClient.class,
                 new String[]{"openConnection"}, "serviceUrl", "accessToken");
         expectPrivate(client, "openConnection", "bundleId", "version", locales)
                 .andReturn(new HttpUrlConnectionMock(okResponse));
@@ -87,7 +87,7 @@ public class ClientTest {
 
     @Test(expected = ServiceException.class)
     public void errorTest() throws Exception {
-        DefaultHttpMessageBundleClientImpl client = PowerMock.createPartialMock(DefaultHttpMessageBundleClientImpl.class,
+        HttpMessageBundleClient client = PowerMock.createPartialMock(HttpMessageBundleClient.class,
                 new String[]{"openConnection"}, "serviceUrl", "accessToken");
         expectPrivate(client, "openConnection", "bundleId", "version", null)
                 .andReturn(new HttpUrlConnectionMock(errorResponse, 401));
