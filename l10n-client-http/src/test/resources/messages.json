@@ -1,5 +1,9 @@
 {
   "defaultLocale": "en_US",
+  "supportedLocales": [
+    "en_US",
+    "en_UK"
+  ],
   "content": [
     {
       "locale": "en_US",

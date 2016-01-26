@@ -1,24 +1,19 @@
 package ws.l10n.client.http;
 
-import ws.l10n.client.http.json.Json;
-import ws.l10n.client.http.json.JsonArray;
-import ws.l10n.client.http.json.JsonObject;
-import ws.l10n.client.http.json.JsonValue;
-import ws.l10n.client.http.json.ParseException;
-import ws.l10n.core.MessageBundleService;
-import ws.l10n.core.ServiceException;
+import ws.l10n.client.http.json.*;
 import ws.l10n.core.MessageBundle;
+import ws.l10n.core.MessageBundleService;
 import ws.l10n.core.MessageMap;
+import ws.l10n.core.ServiceException;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author Serhii Bohutskyi
@@ -35,6 +30,7 @@ public class HttpMessageBundleClient implements MessageBundleService {
     //------------------- JSON NAMES -------------------//
     public static final String CONTENT = "content";
     public static final String DEFAULT_LOCALE = "defaultLocale";
+    public static final String SUPPORTED_LOCALES = "supportedLocales";
     public static final String MESSAGES = "messages";
     public static final String KEY = "key";
     public static final String VALUE = "value";
@@ -61,7 +57,7 @@ public class HttpMessageBundleClient implements MessageBundleService {
         this.accessToken = accessToken;
     }
 
-    public MessageBundle loadMessageBundle(String bundleKey, String version, String[] locales) {
+    public MessageBundle load(String bundleKey, String version, String[] locales) {
 
         validate(bundleKey, version);
 
@@ -79,19 +75,27 @@ public class HttpMessageBundleClient implements MessageBundleService {
                         + ", reason '" + reason + "'");
             }
 
-            JsonValue jsonValue = Json.parse(new InputStreamReader(conn.getInputStream()));
+            MessageBundle messageBundle = parse(conn.getInputStream());
             conn.disconnect();
-            JsonObject jsonObject = jsonValue.asObject();
-
-            Locale defaultLocale = toLocale(jsonObject.getString(DEFAULT_LOCALE, "en_US"));
-            Map<Locale, MessageMap> map = parseContent(jsonObject);
-            return new MessageBundleImpl(defaultLocale, map);
-
+            return messageBundle;
         } catch (IOException e) {
             throw new ServiceException(e);
         } catch (ParseException ex) {
             throw new ServiceException(ex);
         }
+    }
+
+    private MessageBundle parse(InputStream inputStream) throws IOException {
+        JsonValue jsonValue = Json.parse(new InputStreamReader(inputStream));
+        JsonObject jsonObject = jsonValue.asObject();
+        List<Locale> supportedLocales = new ArrayList<Locale>();
+        for (JsonValue supportedLocale : jsonObject.get(SUPPORTED_LOCALES).asArray()) {
+            supportedLocales.add(toLocale(supportedLocale.asString()));
+        }
+        Locale defaultLocale = toLocale(jsonObject.getString(DEFAULT_LOCALE, "en_US"));
+        Map<Locale, MessageMap> map = parseContent(jsonObject);
+
+        return new MessageBundleImpl(defaultLocale, map, supportedLocales);
     }
 
     private void validate(String bundleKey, String version) {
@@ -103,8 +107,8 @@ public class HttpMessageBundleClient implements MessageBundleService {
         }
     }
 
-    public MessageBundle loadMessageBundle(String bundleKey, String version) {
-        return loadMessageBundle(bundleKey, version, null);
+    public MessageBundle load(String bundleKey, String version) {
+        return load(bundleKey, version, null);
     }
 
     private String tryGetReason(HttpURLConnection conn) {

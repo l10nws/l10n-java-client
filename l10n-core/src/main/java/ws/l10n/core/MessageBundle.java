@@ -25,5 +25,6 @@ public interface MessageBundle {
      */
     Map<Locale, MessageMap> getMessages();
 
+    Iterable<Locale> getSupportedLocales();
 
 }

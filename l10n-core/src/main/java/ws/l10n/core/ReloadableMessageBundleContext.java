@@ -11,7 +11,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  * @author Serhii Bohutskyi
  * @author Anton Mokshyn
  */
-class ReloadableMessageBundleContext implements MessageBundleContext {
+public class ReloadableMessageBundleContext implements MessageBundleContext {
 
     private final MessageBundleService messageBundleService;
 
@@ -46,7 +46,7 @@ class ReloadableMessageBundleContext implements MessageBundleContext {
     public void reload() {
         w.lock();
         try {
-            messageBundleContext.setMessageBundle(messageBundleService.loadMessageBundle(bundleKey, bundleVersion));
+            messageBundleContext.setMessageBundle(messageBundleService.load(bundleKey, bundleVersion));
         } finally {
             w.unlock();
         }

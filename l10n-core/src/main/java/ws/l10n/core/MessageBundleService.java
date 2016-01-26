@@ -16,7 +16,7 @@ public interface MessageBundleService {
      * @param version   version string
      * @return {@link MessageBundle}
      */
-    MessageBundle loadMessageBundle(String bundleKey, String version);
+    MessageBundle load(String bundleKey, String version);
 
     /**
      * The same as above only loads requested locales.
@@ -26,6 +26,6 @@ public interface MessageBundleService {
      * @param locales   requested locales
      * @return {@link MessageBundle}
      */
-    MessageBundle loadMessageBundle(String bundleKey, String version, String[] locales);
+    MessageBundle load(String bundleKey, String version, String[] locales);
 
 }

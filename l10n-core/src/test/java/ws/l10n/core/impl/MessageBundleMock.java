@@ -1,4 +1,4 @@
-package ws.l10n.client.http;
+package ws.l10n.core.impl;
 
 import ws.l10n.core.MessageBundle;
 import ws.l10n.core.MessageMap;
@@ -8,15 +8,14 @@ import java.util.Map;
 
 /**
  * @author Serhii Bohutskyi
- * @author Anton Mokshyn
  */
-public class MessageBundleImpl implements MessageBundle {
+public class MessageBundleMock implements MessageBundle {
 
     private final Locale defLocale;
     private final Map<Locale, MessageMap> messages;
     private final Iterable<Locale> locales;
 
-    public MessageBundleImpl(Locale defLocale, Map<Locale, MessageMap> messages, Iterable<Locale> locales) {
+    public MessageBundleMock(Locale defLocale, Map<Locale, MessageMap> messages, Iterable<Locale> locales) {
         this.defLocale = defLocale;
         this.messages = messages;
         this.locales = locales;
@@ -33,14 +32,4 @@ public class MessageBundleImpl implements MessageBundle {
     public Iterable<Locale> getSupportedLocales() {
         return locales;
     }
-
-    /**
-     * serialization
-     */
-    private MessageBundleImpl() {
-        this.defLocale = null;
-        this.messages = null;
-        this.locales = null;
-    }
-
 }

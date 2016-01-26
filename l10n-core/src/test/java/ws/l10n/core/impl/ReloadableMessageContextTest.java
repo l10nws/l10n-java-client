@@ -1,20 +1,15 @@
 package ws.l10n.core.impl;
 
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-import ws.l10n.core.MessageBundleService;
-import ws.l10n.core.MessageBundle;
-import ws.l10n.core.MessageMap;
-import ws.l10n.core.ScheduledReloadableMessageBundleContext;
+import ws.l10n.core.*;
 
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
-import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.*;
 
 /**
  * @author Serhii Bohutskyi
@@ -25,34 +20,24 @@ public class ReloadableMessageContextTest {
 
     @Test
     public void contextTest() throws InterruptedException {
-//        Options options = new Options()
-//                .setServiceUrl("serviceUrl")
-//                .setAccessToken("accessToken")
-//                .setBundleKey("bundleKey")
-//                .setVersion("1.0.0")
-//                .setReloadPeriod(70 * 1000)
-//                .setUseCodeAsDefaultMessage(false);
-//
-//        MessageBundleContext messageContext = MessageContextFactory.create(options);
 
-        MessageBundleService restMessageBundleService = createMock(MessageBundleService.class);
+        MessageBundleService messageBundleService = createMock(MessageBundleService.class);
 
-//        ReloadableMessageBundleContextImpl context = new ReloadableMessageBundleContextImpl(restL10nClient, createOptions());
-//        expect(restL10nClient.loadMessageBundle("bundleKey", "1.0.0")).andReturn(createResponse()).anyTimes();
-//        replay(restL10nClient);
-//        context.init();
+        ReloadableMessageBundleContext context = new ReloadableMessageBundleContext(messageBundleService, "bundleKey", "bundleVersion");
+        expect(messageBundleService.load("bundleKey", "bundleVersion")).andReturn(createResponse()).anyTimes();
+        replay(messageBundleService);
+        context.init();
 
-//        Assert.assertNotNull(context.getMessage("foo", Locale.CHINA));
+        Assert.assertNotNull(context.getMessage("foo", Locale.CHINA));
 
     }
 
     private MessageBundle createResponse() {
         Map<Locale, MessageMap> content = new HashMap<Locale, MessageMap>();
-//        content.put(Locale.ENGLISH, new MessageMapMock(createRandomMessages(), Locale.ENGLISH));
-//        content.put(Locale.CANADA, new MessageMapMock(createRandomMessages(), Locale.CANADA));
-//        content.put(Locale.CHINA, new MessageMapMock(createRandomMessages(), Locale.CHINA));
-//        return new MessageBundleImpl(Locale.ENGLISH, content);
-        return null;
+        content.put(Locale.ENGLISH, new MessageMapMock(createRandomMessages(), Locale.ENGLISH));
+        content.put(Locale.CANADA, new MessageMapMock(createRandomMessages(), Locale.CANADA));
+        content.put(Locale.CHINA, new MessageMapMock(createRandomMessages(), Locale.CHINA));
+        return new MessageBundleMock(Locale.ENGLISH, content, Arrays.asList(Locale.ENGLISH, Locale.CANADA, Locale.CHINA));
     }
 
     private Map<String, String> createRandomMessages() {
@@ -61,15 +46,5 @@ public class ReloadableMessageContextTest {
         messages.put("biz", UUID.randomUUID().toString());
         return messages;
     }
-
-
-//    private Options createOptions() {
-//        return new Options()
-//                .setServiceUrl("serviceUrl")
-//                .setAccessToken("accessToken")
-//                .setBundleKey("bundleKey")
-//                .setVersion("1.0.0")
-//                .setReloadPeriod(70 * 1000)
-//                .setUseCodeAsDefaultMessage(false);
-//    }
 }
+

@@ -8,8 +8,8 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import ws.l10n.client.http.HttpMessageBundleClient;
 import ws.l10n.client.mock.HttpUrlConnectionMock;
-import ws.l10n.core.ServiceException;
 import ws.l10n.core.MessageBundle;
+import ws.l10n.core.ServiceException;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -19,9 +19,7 @@ import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.powermock.api.easymock.PowerMock.expectPrivate;
-import static org.powermock.api.easymock.PowerMock.replay;
-import static org.powermock.api.easymock.PowerMock.verify;
+import static org.powermock.api.easymock.PowerMock.*;
 
 /**
  * @author Serhii Bohutskyi
@@ -50,7 +48,7 @@ public class ClientTest {
 
         replay(client);
 
-        MessageBundle messageBundle = client.loadMessageBundle("bundleId", "version");
+        MessageBundle messageBundle = client.load("bundleId", "version");
 
         assertNotNull(messageBundle);
         assertNotNull(messageBundle.getDefaultLocale());
@@ -69,16 +67,18 @@ public class ClientTest {
 
         replay(client);
 
-        MessageBundle messageBundle = client.loadMessageBundle("bundleId", "version", locales);
+        MessageBundle messageBundle = client.load("bundleId", "version", locales);
 
         assertNotNull(messageBundle);
+        assertNotNull(messageBundle.getSupportedLocales());
+
         assertEquals(new Locale("en", "US"), messageBundle.getDefaultLocale());
 
         Map<String, String> enUsMessages = messageBundle.getMessages().get(new Locale("en", "US")).getMessages();
         assertEquals("bar", enUsMessages.get("foo"));
         assertEquals("baz", enUsMessages.get("biz"));
 
-        Map<String, String> enUkMessages = messageBundle.getMessages().get(new Locale("en", "US")).getMessages();
+        Map<String, String> enUkMessages = messageBundle.getMessages().get(new Locale("en", "UK")).getMessages();
         assertEquals("Zzyzx", enUkMessages.get("Xyzzy"));
         assertEquals("fu", enUkMessages.get("sna"));
 
@@ -93,7 +93,7 @@ public class ClientTest {
                 .andReturn(new HttpUrlConnectionMock(errorResponse, 401));
         replay(client);
 
-        client.loadMessageBundle("bundleId", "version");
+        client.load("bundleId", "version");
 
         verify(client);
     }
