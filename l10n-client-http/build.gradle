@@ -3,9 +3,7 @@ apply plugin: 'maven'
 apply plugin: 'maven-publish'
 apply plugin: 'signing'
 
-archivesBaseName = "l10n-core"
-
-sourceCompatibility = 1.5
+archivesBaseName = "l10n-client-http"
 
 repositories {
     mavenCentral()
@@ -13,12 +11,15 @@ repositories {
 
 dependencies {
 
+    compile project(":l10n-core")
+
     testCompile 'junit:junit:4.12'
     testCompile 'org.powermock:powermock-module-junit4:1.6.4'
     testCompile 'org.powermock:powermock-core:1.6.4'
     testCompile 'org.powermock:powermock-api-support:1.6.4'
     testCompile 'org.powermock:powermock-api-easymock:1.6.4'
     testCompile 'org.easymock:easymock:3.4'
+
 }
 
 javadoc {
@@ -73,7 +74,7 @@ uploadArchives {
             }
 
             pom.project {
-                name 'L10n Java Core Project'
+                name 'L10n Java Client Project'
                 packaging 'jar'
                 // optionally artifactId can be defined here
                 description 'Library for working with L10n service API in java'

@@ -1,6 +1,6 @@
 rootProject.name = 'l10n'
 
 include 'l10n-core'
-include 'l10n-client'
+include 'l10n-client-http'
 include 'l10n-spring' 
 include 'l10n-gradle-plugin'

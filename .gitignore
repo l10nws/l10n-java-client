@@ -1,9 +1,11 @@
 # Folders #
 .idea/
+.gradle/
+.git/
+.svn/
+*/build/
 
 # Files #
-*.class
-*.jar
 *.war
 *.ear
 *.iml

@@ -1,7 +1,5 @@
 package ws.l10n.core;
 
-import ws.l10n.client.L10nClient;
-
 import java.util.Locale;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
