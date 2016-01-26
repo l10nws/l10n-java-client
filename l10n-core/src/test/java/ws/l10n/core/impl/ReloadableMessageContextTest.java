@@ -4,7 +4,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-import ws.l10n.core.L10nClient;
+import ws.l10n.core.MessageBundleService;
 import ws.l10n.core.MessageBundle;
 import ws.l10n.core.MessageMap;
 import ws.l10n.core.ScheduledReloadableMessageBundleContext;
@@ -35,7 +35,7 @@ public class ReloadableMessageContextTest {
 //
 //        MessageBundleContext messageContext = MessageContextFactory.create(options);
 
-        L10nClient restL10nClient = createMock(L10nClient.class);
+        MessageBundleService restMessageBundleService = createMock(MessageBundleService.class);
 
 //        ReloadableMessageBundleContextImpl context = new ReloadableMessageBundleContextImpl(restL10nClient, createOptions());
 //        expect(restL10nClient.loadMessageBundle("bundleKey", "1.0.0")).andReturn(createResponse()).anyTimes();

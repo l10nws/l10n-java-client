@@ -13,7 +13,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  */
 class ReloadableMessageBundleContext implements MessageBundleContext {
 
-    private final L10nClient l10nClient;
+    private final MessageBundleService messageBundleService;
 
     private final String bundleKey;
     private final String bundleVersion;
@@ -24,8 +24,8 @@ class ReloadableMessageBundleContext implements MessageBundleContext {
 
     private final SimpleMessageBundleContext messageBundleContext = new SimpleMessageBundleContext(null);
 
-    public ReloadableMessageBundleContext(L10nClient l10nClient, String bundleKey, String bundleVersion) {
-        if (l10nClient == null) {
+    public ReloadableMessageBundleContext(MessageBundleService messageBundleService, String bundleKey, String bundleVersion) {
+        if (messageBundleService == null) {
             throw new IllegalArgumentException("L10n client cannot be null");
         }
         if (bundleKey == null || bundleKey.length() == 0) {
@@ -34,7 +34,7 @@ class ReloadableMessageBundleContext implements MessageBundleContext {
         if (bundleVersion == null || bundleVersion.length() == 0) {
             throw new IllegalArgumentException("bundle version cannot be null or empty");
         }
-        this.l10nClient = l10nClient;
+        this.messageBundleService = messageBundleService;
         this.bundleKey = bundleKey;
         this.bundleVersion = bundleVersion;
     }
@@ -46,7 +46,7 @@ class ReloadableMessageBundleContext implements MessageBundleContext {
     public void reload() {
         w.lock();
         try {
-            messageBundleContext.setMessageBundle(l10nClient.loadMessageBundle(bundleKey, bundleVersion));
+            messageBundleContext.setMessageBundle(messageBundleService.loadMessageBundle(bundleKey, bundleVersion));
         } finally {
             w.unlock();
         }

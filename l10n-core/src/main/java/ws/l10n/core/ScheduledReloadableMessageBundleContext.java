@@ -15,13 +15,13 @@ public class ScheduledReloadableMessageBundleContext extends ReloadableMessageBu
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
     private long period = ONE_HOUR;
 
-    public ScheduledReloadableMessageBundleContext(L10nClient l10nClient, String bundleKey, String bundleVersion) {
-        super(l10nClient, bundleKey, bundleVersion);
+    public ScheduledReloadableMessageBundleContext(MessageBundleService messageBundleService, String bundleKey, String bundleVersion) {
+        super(messageBundleService, bundleKey, bundleVersion);
     }
 
-    public ScheduledReloadableMessageBundleContext(L10nClient l10nClient, String bundleKey, String bundleVersion,
+    public ScheduledReloadableMessageBundleContext(MessageBundleService messageBundleService, String bundleKey, String bundleVersion,
                                                    long period) {
-        super(l10nClient, bundleKey, bundleVersion);
+        super(messageBundleService, bundleKey, bundleVersion);
         if(period < ONE_MINUTE) {
             throw new IllegalArgumentException("scheduler period cannot be less that 1 minute");
         }
