@@ -3,11 +3,11 @@ package ws.l10n.core;
 /**
  * Interface describes main L10n APIs functionality
  *
- * In case of error or exceptions throws runtime {@link L10nClientException}.
+ * In case of error or exceptions throws runtime {@link ServiceException}.
  *
  * @author Serhii Bohutskyi
  */
-public interface L10nClient {
+public interface MessageBundleService {
 
     /**
      * Loads messages and put them to {@link MessageBundle} object.

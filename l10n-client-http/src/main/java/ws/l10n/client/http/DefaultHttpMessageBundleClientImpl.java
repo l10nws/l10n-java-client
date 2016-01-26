@@ -5,8 +5,8 @@ import ws.l10n.client.http.json.JsonArray;
 import ws.l10n.client.http.json.JsonObject;
 import ws.l10n.client.http.json.JsonValue;
 import ws.l10n.client.http.json.ParseException;
-import ws.l10n.core.L10nClient;
-import ws.l10n.core.L10nClientException;
+import ws.l10n.core.MessageBundleService;
+import ws.l10n.core.ServiceException;
 import ws.l10n.core.MessageBundle;
 import ws.l10n.core.MessageMap;
 
@@ -23,7 +23,7 @@ import java.util.Map;
 /**
  * @author Serhii Bohutskyi
  */
-public class DefaultHttpClientImpl implements L10nClient {
+public class DefaultHttpMessageBundleClientImpl implements MessageBundleService {
 
     //------------------- HTTP -------------------//
     private static final String ACCESS_TOKEN_HEADER = "access-token";
@@ -46,12 +46,12 @@ public class DefaultHttpClientImpl implements L10nClient {
     private final String serviceUrl;
     private final String accessToken;
 
-    public DefaultHttpClientImpl(String serviceUrl, String accessToken) {
+    public DefaultHttpMessageBundleClientImpl(String serviceUrl, String accessToken) {
         if (serviceUrl == null || serviceUrl.equals("")) {
-            throw new L10nClientException("Service Url should be not empty");
+            throw new ServiceException("Service Url should be not empty");
         }
         if (accessToken == null || accessToken.equals("")) {
-            throw new L10nClientException("AccessToken  should be not empty");
+            throw new ServiceException("AccessToken should be not empty");
         }
         if (serviceUrl.endsWith("/")) {
             //remove last '/'
@@ -75,7 +75,7 @@ public class DefaultHttpClientImpl implements L10nClient {
 
             if (conn.getResponseCode() != 200) {
                 String reason = tryGetReason(conn);
-                throw new L10nClientException("Failed: HTTP error code : " + conn.getResponseCode()
+                throw new ServiceException("Failed: HTTP error code : " + conn.getResponseCode()
                         + ", reason '" + reason + "'");
             }
 
@@ -88,18 +88,18 @@ public class DefaultHttpClientImpl implements L10nClient {
             return new MessageBundleImpl(defaultLocale, map);
 
         } catch (IOException e) {
-            throw new L10nClientException(e);
+            throw new ServiceException(e);
         } catch (ParseException ex) {
-            throw new L10nClientException(ex);
+            throw new ServiceException(ex);
         }
     }
 
     private void validate(String bundleKey, String version) {
         if (bundleKey == null || bundleKey.equals("")) {
-            throw new L10nClientException("BundleUid should be not empty");
+            throw new ServiceException("BundleUid should be not empty");
         }
         if (version == null || version.equals("")) {
-            throw new L10nClientException("Version  should be not empty");
+            throw new ServiceException("Version  should be not empty");
         }
     }
 
@@ -146,7 +146,7 @@ public class DefaultHttpClientImpl implements L10nClient {
         try {
             return URLEncoder.encode(value, "UTF-8");
         } catch (UnsupportedEncodingException e) {
-            throw new L10nClientException(e.getMessage(), e);
+            throw new ServiceException(e.getMessage(), e);
         }
     }
 
