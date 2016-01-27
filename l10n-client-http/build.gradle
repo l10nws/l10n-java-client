@@ -7,11 +7,12 @@ archivesBaseName = "l10n-client-http"
 
 repositories {
     mavenCentral()
+    mavenLocal()
 }
 
 dependencies {
 
-    compile project(":l10n-core")
+    compile("ws.l10n:l10n-core:1.0.2") { transitive = true }
 
     testCompile 'junit:junit:4.12'
     testCompile 'org.powermock:powermock-module-junit4:1.6.4'

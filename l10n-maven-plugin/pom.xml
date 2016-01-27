@@ -6,7 +6,7 @@
 
     <groupId>ws.l10n</groupId>
     <artifactId>l10n-maven-plugin</artifactId>
-    <version>1.0.1</version>
+    <version>1.0.2</version>
     <url>https://github.com/l10nws/l10n-java</url>
 
     <packaging>maven-plugin</packaging>
@@ -63,7 +63,7 @@
         <dependency>
             <groupId>ws.l10n</groupId>
             <artifactId>l10n-client-http</artifactId>
-            <version>1.0.1</version>
+            <version>1.0.2</version>
         </dependency>
         <dependency>
             <groupId>org.apache.maven.plugin-tools</groupId>
