@@ -12,18 +12,12 @@ apply plugin: 'spring-boot'
 
 sourceCompatibility = 1.5
 
-jar {
-    baseName = 'myproject'
-    version =  '0.0.1-SNAPSHOT'
-}
-
 repositories {
     mavenLocal()
     mavenCentral()
 }
 
 dependencies {
+    compile 'ws.l10n:l10n-spring:1.0.2'
     compile("org.springframework.boot:spring-boot-starter-actuator")
-
-    compile 'ws.l10n:l10n-spring:1.0.1'
 }

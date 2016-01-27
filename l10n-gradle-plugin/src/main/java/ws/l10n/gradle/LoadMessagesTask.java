@@ -2,10 +2,10 @@ package ws.l10n.gradle;
 
 import org.gradle.api.DefaultTask;
 import org.gradle.api.tasks.TaskAction;
-import ws.l10n.client.L10nClient;
-import ws.l10n.client.MessageBundle;
-import ws.l10n.client.MessageMap;
-import ws.l10n.client.impl.DefaultHttpClientImpl;
+import ws.l10n.client.http.HttpMessageBundleClient;
+import ws.l10n.core.MessageBundle;
+import ws.l10n.core.MessageBundleService;
+import ws.l10n.core.MessageMap;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -22,8 +22,8 @@ public class LoadMessagesTask extends DefaultTask {
         L10nExtension extension = getProject().getExtensions().findByType(L10nExtension.class);
         validate(extension);
 
-        L10nClient l10nClient = new DefaultHttpClientImpl(extension.getServiceUrl(), extension.getAccessToken());
-        MessageBundle messageBundle = l10nClient.loadMessageBundle(extension.getBundleKey(), extension.getVersion());
+        MessageBundleService l10nClient = new HttpMessageBundleClient(extension.getServiceUrl(), extension.getAccessToken());
+        MessageBundle messageBundle = l10nClient.load(extension.getBundleKey(), extension.getVersion());
         getLogger().info("Successfully loaded packs " + messageBundle.getMessages().size());
 
         Locale defaultLocale = messageBundle.getDefaultLocale();

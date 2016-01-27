@@ -5,10 +5,10 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
-import ws.l10n.client.L10nClient;
-import ws.l10n.client.MessageBundle;
-import ws.l10n.client.MessageMap;
-import ws.l10n.client.impl.DefaultHttpClientImpl;
+import ws.l10n.client.http.HttpMessageBundleClient;
+import ws.l10n.core.MessageBundle;
+import ws.l10n.core.MessageBundleService;
+import ws.l10n.core.MessageMap;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -43,8 +43,8 @@ public class MessageMojo extends AbstractMojo {
     public void execute() throws MojoExecutionException, MojoFailureException {
         getLog().info("[L10n] START LOADING");
 
-        L10nClient restClient = new DefaultHttpClientImpl(serviceUrl, accessToken);
-        MessageBundle messageBundle = restClient.loadMessageBundle(bundleKey, version);
+        MessageBundleService restClient = new HttpMessageBundleClient(serviceUrl, accessToken);
+        MessageBundle messageBundle = restClient.load(bundleKey, version);
         Locale defaultLocale = messageBundle.getDefaultLocale();
         Map<Locale, MessageMap> packs = messageBundle.getMessages();
         for (MessageMap messageMap : packs.values()) {

@@ -9,11 +9,11 @@ sourceCompatibility = 1.5
 
 repositories {
     mavenCentral()
+    mavenLocal()
 }
 
 dependencies {
-    compile project(":l10n-core")
-
+    compile("ws.l10n:l10n-core:1.0.2") { transitive = true }
     compile 'org.springframework:spring-context-support:2.5'
 
     testCompile 'junit:junit:4.12'
