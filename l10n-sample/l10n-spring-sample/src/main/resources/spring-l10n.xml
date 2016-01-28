@@ -4,7 +4,7 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
     <!--L10n Service Client-->
-    <bean id="l10nClient" class="ws.l10n.client.impl.DefaultHttpClientImpl">
+    <bean id="l10nClient" class="ws.l10n.client.http.HttpMessageBundleClient">
         <constructor-arg value="${l10n.serviceUrl}"/>
         <constructor-arg value="${l10n.accessToken}"/>
     </bean>

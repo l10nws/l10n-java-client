@@ -4,7 +4,7 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
     <!--L10n Service Client-->
-    <bean id="l10nClient" class="ws.l10n.client.impl.DefaultHttpClientImpl">
+    <bean id="l10nClient" class="ws.l10n.client.http.HttpMessageBundleClient">
         <constructor-arg value="${l10n.serviceUrl}"/>
         <constructor-arg value="${l10n.accessToken}"/>
     </bean>
@@ -14,6 +14,7 @@
         <constructor-arg ref="l10nClient"/>
         <constructor-arg value="${l10n.bundleKey}"/>
         <constructor-arg value="${l10n.bundleVersion}"/>
+        <constructor-arg value="${l10n.reloadPeriod}"/>
     </bean>
 
     <bean id="messageSource" class="ws.l10n.spring.L10nBundleMessageSource">
