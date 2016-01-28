@@ -19,25 +19,25 @@ import java.util.Map;
 /**
  * @author Serhii Bohutskyi
  */
-@Mojo(name = "load")
+@Mojo(name = "loadMessages")
 public class MessageMojo extends AbstractMojo {
 
-    @Parameter(property = "load.serviceUrl", defaultValue = "https://l10n.ws/api/v1")
+    @Parameter(property = "loadMessages.serviceUrl", defaultValue = "https://l10n.ws/api/v1")
     private String serviceUrl;
 
-    @Parameter(property = "load.accessToken", required = true)
+    @Parameter(property = "loadMessages.accessToken", required = true)
     private String accessToken;
 
-    @Parameter(property = "load.bundleKey", required = true)
+    @Parameter(property = "loadMessages.bundleKey", required = true)
     private String bundleKey;
 
-    @Parameter(property = "load.version", required = true)
+    @Parameter(property = "loadMessages.version", required = true)
     private String version;
 
-    @Parameter(property = "load.baseName", defaultValue = "messages")
+    @Parameter(property = "loadMessages.baseName", defaultValue = "messages")
     private String baseName;
 
-    @Parameter(property = "load.path", defaultValue = "./src/main/resources")
+    @Parameter(property = "loadMessages.path", defaultValue = "./src/main/resources")
     private String path;
 
     public void execute() throws MojoExecutionException, MojoFailureException {

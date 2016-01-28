@@ -20,12 +20,14 @@
                     <accessToken>C85hg</accessToken>
                     <bundleKey>C85hg</bundleKey>
                     <version>1</version>
+                    <baseName>1</baseName>
+                    <path>1</path>
                 </configuration>
                 <executions>
                     <execution>
                         <phase>compile</phase>
                         <goals>
-                            <goal>load</goal>
+                            <goal>loadMessages</goal>
                         </goals>
                     </execution>
                 </executions>
