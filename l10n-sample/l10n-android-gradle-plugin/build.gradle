@@ -1,0 +1,31 @@
+apply plugin: 'l10n-android-gradle-plugin'
+apply plugin: 'com.android.application'
+
+buildscript {
+    repositories {
+        mavenCentral()
+        mavenLocal()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:1.5.0'
+        classpath 'ws.l10n:l10n-android-gradle-plugin:1.0.2'
+    }
+
+}
+
+android {
+    compileSdkVersion 23
+    buildToolsVersion "23.0.2"
+}
+
+
+l10nOptions {
+    serviceUrl = "http://localhost:9000/api/v1"
+    accessToken = "C85hg"
+    bundleKey = "C85hg"
+    version = "1"
+    fileName = "strings.xml"
+    resourcePath = "./src/main/res"
+    rewriteExisted = true
+    useRegion = true
+}
