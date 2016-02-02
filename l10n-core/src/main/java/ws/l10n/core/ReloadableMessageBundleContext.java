@@ -1,6 +1,7 @@
 package ws.l10n.core;
 
 import java.util.Locale;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -21,6 +22,8 @@ public class ReloadableMessageBundleContext implements MessageBundleContext {
     private final ReadWriteLock rwl = new ReentrantReadWriteLock();
     private final Lock r = rwl.readLock();
     private final Lock w = rwl.writeLock();
+
+    private final AtomicBoolean initialization = new AtomicBoolean(false);
 
     private final SimpleMessageBundleContext messageBundleContext = new SimpleMessageBundleContext(null);
 
@@ -44,11 +47,18 @@ public class ReloadableMessageBundleContext implements MessageBundleContext {
     }
 
     public void reload() {
-        w.lock();
-        try {
-            messageBundleContext.setMessageBundle(messageBundleService.load(bundleKey, bundleVersion));
-        } finally {
-            w.unlock();
+        if (initialization.compareAndSet(false, true)) {
+            try {
+                MessageBundle messageBundle = messageBundleService.load(bundleKey, bundleVersion);
+                w.lock();
+                try {
+                    messageBundleContext.setMessageBundle(messageBundle);
+                } finally {
+                    w.unlock();
+                }
+            } finally {
+                initialization.set(false);
+            }
         }
     }
 
