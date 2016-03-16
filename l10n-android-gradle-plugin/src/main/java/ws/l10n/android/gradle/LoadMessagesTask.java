@@ -73,6 +73,7 @@ public class LoadMessagesTask extends DefaultTask {
 
         if (!extension.isRewriteExisted() && file.exists()) {
             getLogger().error("File already exists '{}'. Can add to l10nOptions 'rewriteExisted = true'.", filePath);
+            return;
         }
 
         BufferedWriter out = null;
