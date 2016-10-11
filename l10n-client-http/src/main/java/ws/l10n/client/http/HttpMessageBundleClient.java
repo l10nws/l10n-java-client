@@ -11,6 +11,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
+import java.net.ProtocolException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.*;
@@ -65,9 +66,10 @@ public class HttpMessageBundleClient implements MessageBundleService {
 
             HttpURLConnection conn = openConnection(bundleKey, version, locales);
 
-            conn.setRequestMethod("GET");
-            conn.setRequestProperty("Accept", "application/json");
-            conn.setRequestProperty(ACCESS_TOKEN_HEADER, accessToken);
+            if (conn.getResponseCode() == 301) { // redirect
+                String location = conn.getHeaderField("Location");
+                conn = openConnection(location);
+            }
 
             if (conn.getResponseCode() != 200) {
                 String reason = tryGetReason(conn);
@@ -86,7 +88,7 @@ public class HttpMessageBundleClient implements MessageBundleService {
     }
 
     private MessageBundle parse(InputStream inputStream) throws IOException {
-        JsonValue jsonValue = Json.parse(new InputStreamReader(inputStream));
+        JsonValue jsonValue = Json.parse(new InputStreamReader(inputStream, "UTF-8"));
         JsonObject jsonObject = jsonValue.asObject();
         List<Locale> supportedLocales = new ArrayList<Locale>();
         for (JsonValue supportedLocale : jsonObject.get(SUPPORTED_LOCALES).asArray()) {
@@ -113,7 +115,7 @@ public class HttpMessageBundleClient implements MessageBundleService {
 
     private String tryGetReason(HttpURLConnection conn) {
         try {
-            JsonValue jsonValue = Json.parse(new InputStreamReader(conn.getInputStream()));
+            JsonValue jsonValue = Json.parse(new InputStreamReader(conn.getInputStream(), "UTF-8"));
 
             return jsonValue.asObject().getString(REASON, "");
         } catch (IOException e) {
@@ -124,7 +126,21 @@ public class HttpMessageBundleClient implements MessageBundleService {
 
     private HttpURLConnection openConnection(String bundleUid, String version, String[] locales) throws IOException {
         URL url = new URL(serviceUrl + MESSAGES_PATH + toQuery(bundleUid, version, locales));
-        return (HttpURLConnection) url.openConnection();
+        HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
+        setDefaultHeaders(httpURLConnection);
+        return httpURLConnection;
+    }
+
+    private HttpURLConnection openConnection(String spec) throws IOException {
+        HttpURLConnection httpURLConnection = (HttpURLConnection) new URL(spec).openConnection();
+        setDefaultHeaders(httpURLConnection);
+        return httpURLConnection;
+    }
+
+    private void setDefaultHeaders(HttpURLConnection conn) throws ProtocolException {
+        conn.setRequestMethod("GET");
+        conn.setRequestProperty("Accept", "application/json");
+        conn.setRequestProperty(ACCESS_TOKEN_HEADER, accessToken);
     }
 
     private Map<Locale, MessageMap> parseContent(JsonObject jsonObject) {
