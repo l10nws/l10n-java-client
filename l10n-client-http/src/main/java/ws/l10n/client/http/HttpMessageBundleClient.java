@@ -1,5 +1,7 @@
 package ws.l10n.client.http;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ws.l10n.client.http.json.*;
 import ws.l10n.core.MessageBundle;
 import ws.l10n.core.MessageBundleService;
@@ -11,14 +13,18 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
+import java.net.ProtocolException;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.nio.charset.Charset;
 import java.util.*;
 
 /**
  * @author Serhii Bohutskyi
  */
 public class HttpMessageBundleClient implements MessageBundleService {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(HttpMessageBundleClient.class);
 
     //------------------- HTTP -------------------//
     private static final String ACCESS_TOKEN_HEADER = "access-token";
@@ -65,28 +71,32 @@ public class HttpMessageBundleClient implements MessageBundleService {
 
             HttpURLConnection conn = openConnection(bundleKey, version, locales);
 
-            conn.setRequestMethod("GET");
-            conn.setRequestProperty("Accept", "application/json");
-            conn.setRequestProperty(ACCESS_TOKEN_HEADER, accessToken);
+            if (conn.getResponseCode() == 301) { // redirect
+                String location = conn.getHeaderField("Location");
+                LOGGER.debug("Http request redirected to {}", location);
+                conn = openConnection(location);
+            }
 
             if (conn.getResponseCode() != 200) {
                 String reason = tryGetReason(conn);
-                throw new ServiceException("Failed: HTTP error code : " + conn.getResponseCode()
-                        + ", reason '" + reason + "'");
+                LOGGER.error("Failed: HTTP error code : " + conn.getResponseCode() + ", reason '" + reason + "'");
+                throw new ServiceException("Failed: HTTP error code : " + conn.getResponseCode() + ", reason '" + reason + "'");
             }
 
             MessageBundle messageBundle = parse(conn.getInputStream());
             conn.disconnect();
             return messageBundle;
         } catch (IOException e) {
+            LOGGER.error("Load messages error", e);
             throw new ServiceException(e);
         } catch (ParseException ex) {
+            LOGGER.error("Parse JSON error", ex);
             throw new ServiceException(ex);
         }
     }
 
-    private MessageBundle parse(InputStream inputStream) throws IOException {
-        JsonValue jsonValue = Json.parse(new InputStreamReader(inputStream));
+    private MessageBundle parse(InputStream inputStream) {
+        JsonValue jsonValue = Json.parse(new InputStreamReader(inputStream, Charset.forName("UTF-8")));
         JsonObject jsonObject = jsonValue.asObject();
         List<Locale> supportedLocales = new ArrayList<Locale>();
         for (JsonValue supportedLocale : jsonObject.get(SUPPORTED_LOCALES).asArray()) {
@@ -111,20 +121,35 @@ public class HttpMessageBundleClient implements MessageBundleService {
         return load(bundleKey, version, null);
     }
 
-    private String tryGetReason(HttpURLConnection conn) {
+    private String tryGetReason(HttpURLConnection conn) throws IOException {
         try {
-            JsonValue jsonValue = Json.parse(new InputStreamReader(conn.getInputStream()));
-
+            JsonValue jsonValue = Json.parse(new InputStreamReader(conn.getInputStream(), Charset.forName("UTF-8")));
             return jsonValue.asObject().getString(REASON, "");
-        } catch (IOException e) {
-            //skip
+        } catch (ParseException e) {
+            LOGGER.warn("Cannot parse response.", e);
         }
-        return "";
+        return "unknown";
     }
 
     private HttpURLConnection openConnection(String bundleUid, String version, String[] locales) throws IOException {
         URL url = new URL(serviceUrl + MESSAGES_PATH + toQuery(bundleUid, version, locales));
-        return (HttpURLConnection) url.openConnection();
+        LOGGER.debug("Open Http connection {}", url);
+        HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
+        setDefaultHeaders(httpURLConnection);
+        return httpURLConnection;
+    }
+
+    private HttpURLConnection openConnection(String spec) throws IOException {
+        LOGGER.debug("Open Http connection {}", spec);
+        HttpURLConnection httpURLConnection = (HttpURLConnection) new URL(spec).openConnection();
+        setDefaultHeaders(httpURLConnection);
+        return httpURLConnection;
+    }
+
+    private void setDefaultHeaders(HttpURLConnection conn) throws ProtocolException {
+        conn.setRequestMethod("GET");
+        conn.setRequestProperty("Accept", "application/json");
+        conn.setRequestProperty(ACCESS_TOKEN_HEADER, accessToken);
     }
 
     private Map<Locale, MessageMap> parseContent(JsonObject jsonObject) {

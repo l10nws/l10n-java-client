@@ -1,6 +1,5 @@
 package ws.l10n.client.http.json;
 
-import java.io.IOException;
 import java.io.Reader;
 
 public final class Json {
@@ -14,7 +13,7 @@ public final class Json {
 
     public static final JsonValue FALSE = new JsonLiteral("false");
 
-    public static JsonValue parse(Reader reader) throws IOException {
+    public static JsonValue parse(Reader reader) {
         if (reader == null) {
             throw new NullPointerException("reader is null");
         }

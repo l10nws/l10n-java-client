@@ -9,7 +9,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class ScheduledReloadableMessageBundleContext extends ReloadableMessageBundleContext {
 
-    private static final int ONE_MINUTE = 60 * 1000;
+    private static final int ONE_SECOND = 1000;
     private static final int ONE_HOUR = 60 * 60 * 1000;
 
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
@@ -22,8 +22,8 @@ public class ScheduledReloadableMessageBundleContext extends ReloadableMessageBu
     public ScheduledReloadableMessageBundleContext(MessageBundleService messageBundleService, String bundleKey, String bundleVersion,
                                                    long period) {
         super(messageBundleService, bundleKey, bundleVersion);
-        if(period < ONE_MINUTE) {
-            throw new IllegalArgumentException("scheduler period cannot be less that 1 minute");
+        if(period < ONE_SECOND) {
+            throw new IllegalArgumentException("Scheduler period cannot be less that 1 second");
         }
         this.period = period;
     }

@@ -7,4 +7,5 @@ Documentation of integration:
 - [Spring](https://l10n.ws/doc/spring)
 - [Gradle](https://l10n.ws/doc/gradle)
 - [Maven](https://l10n.ws/doc/maven)
+- [Android](https://l10n.ws/doc/android)
 
