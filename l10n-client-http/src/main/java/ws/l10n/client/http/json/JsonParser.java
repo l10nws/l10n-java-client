@@ -29,7 +29,7 @@ class JsonParser {
         captureStart = -1;
     }
 
-    JsonValue parse() throws IOException {
+    JsonValue parse() {
         read();
         skipWhiteSpace();
         JsonValue result = readValue();
@@ -40,7 +40,7 @@ class JsonParser {
         return result;
     }
 
-    private JsonValue readValue() throws IOException {
+    private JsonValue readValue() {
         switch (current) {
             case 'n':
                 return readNull();
@@ -71,7 +71,7 @@ class JsonParser {
         }
     }
 
-    private JsonArray readArray() throws IOException {
+    private JsonArray readArray() {
         read();
         JsonArray array = new JsonArray();
         skipWhiteSpace();
@@ -89,7 +89,7 @@ class JsonParser {
         return array;
     }
 
-    private JsonObject readObject() throws IOException {
+    private JsonObject readObject() {
         read();
         JsonObject object = new JsonObject();
         skipWhiteSpace();
@@ -113,14 +113,14 @@ class JsonParser {
         return object;
     }
 
-    private String readName() throws IOException {
+    private String readName() {
         if (current != '"') {
             throw expected("name");
         }
         return readStringInternal();
     }
 
-    private JsonValue readNull() throws IOException {
+    private JsonValue readNull() {
         read();
         readRequiredChar('u');
         readRequiredChar('l');
@@ -128,7 +128,7 @@ class JsonParser {
         return Json.NULL;
     }
 
-    private JsonValue readTrue() throws IOException {
+    private JsonValue readTrue() {
         read();
         readRequiredChar('r');
         readRequiredChar('u');
@@ -136,7 +136,7 @@ class JsonParser {
         return Json.TRUE;
     }
 
-    private JsonValue readFalse() throws IOException {
+    private JsonValue readFalse() {
         read();
         readRequiredChar('a');
         readRequiredChar('l');
@@ -145,17 +145,17 @@ class JsonParser {
         return Json.FALSE;
     }
 
-    private void readRequiredChar(char ch) throws IOException {
+    private void readRequiredChar(char ch) {
         if (!readChar(ch)) {
             throw expected("'" + ch + "'");
         }
     }
 
-    private JsonValue readString() throws IOException {
+    private JsonValue readString() {
         return new JsonString(readStringInternal());
     }
 
-    private String readStringInternal() throws IOException {
+    private String readStringInternal() {
         read();
         startCapture();
         while (current != '"') {
@@ -174,7 +174,7 @@ class JsonParser {
         return string;
     }
 
-    private void readEscape() throws IOException {
+    private void readEscape() {
         read();
         switch (current) {
             case '"':
@@ -214,7 +214,7 @@ class JsonParser {
         read();
     }
 
-    private JsonValue readNumber() throws IOException {
+    private JsonValue readNumber() {
         startCapture();
         readChar('-');
         int firstDigit = current;
@@ -230,7 +230,7 @@ class JsonParser {
         return new JsonNumber(endCapture());
     }
 
-    private boolean readFraction() throws IOException {
+    private boolean readFraction() {
         if (!readChar('.')) {
             return false;
         }
@@ -242,7 +242,7 @@ class JsonParser {
         return true;
     }
 
-    private boolean readExponent() throws IOException {
+    private boolean readExponent() {
         if (!readChar('e') && !readChar('E')) {
             return false;
         }
@@ -257,7 +257,7 @@ class JsonParser {
         return true;
     }
 
-    private boolean readChar(char ch) throws IOException {
+    private boolean readChar(char ch) {
         if (current != ch) {
             return false;
         }
@@ -265,7 +265,7 @@ class JsonParser {
         return true;
     }
 
-    private boolean readDigit() throws IOException {
+    private boolean readDigit() {
         if (!isDigit()) {
             return false;
         }
@@ -273,20 +273,24 @@ class JsonParser {
         return true;
     }
 
-    private void skipWhiteSpace() throws IOException {
+    private void skipWhiteSpace() {
         while (isWhiteSpace()) {
             read();
         }
     }
 
-    private void read() throws IOException {
+    private void read() {
         if (index == fill) {
             if (captureStart != -1) {
                 captureBuffer.append(buffer, captureStart, fill - captureStart);
                 captureStart = 0;
             }
             bufferOffset += fill;
-            fill = reader.read(buffer, 0, buffer.length);
+            try {
+                fill = reader.read(buffer, 0, buffer.length);
+            } catch (IOException e) {
+                throw new ParseException("Parse IO error.", e);
+            }
             index = 0;
             if (fill == -1) {
                 current = -1;
