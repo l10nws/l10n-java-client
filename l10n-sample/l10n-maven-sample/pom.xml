@@ -14,18 +14,20 @@
             <plugin>
                 <groupId>ws.l10n</groupId>
                 <artifactId>l10n-maven-plugin</artifactId>
-                <version>1.0.1</version>
+                <version>1.0.2</version>
                 <configuration>
                     <serviceUrl>http://localhost:9000/api/v1</serviceUrl>
                     <accessToken>C85hg</accessToken>
                     <bundleKey>C85hg</bundleKey>
                     <version>1</version>
+                    <baseName>1</baseName>
+                    <path>1</path>
                 </configuration>
                 <executions>
                     <execution>
                         <phase>compile</phase>
                         <goals>
-                            <goal>load</goal>
+                            <goal>loadMessages</goal>
                         </goals>
                     </execution>
                 </executions>
